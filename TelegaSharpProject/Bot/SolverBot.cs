@@ -1,8 +1,10 @@
-﻿using Telegram.Bot;
+﻿using TelegaSharpProject.Domain;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegaSharpProject.Application.Bot;
 
@@ -37,6 +39,7 @@ internal class SolverBot
             AllowedUpdates = new[] // https://core.telegram.org/bots/api#update
             {
                 UpdateType.Message,
+                UpdateType.CallbackQuery,
             },
             ThrowPendingUpdates = true,
         };
@@ -55,20 +58,92 @@ internal class SolverBot
             switch (update.Type)
             {
                 case UpdateType.Message:
+
+                    var message = update.Message;
+
+                    var textUser = message.From;
+
+                    Console.WriteLine($"{textUser.FirstName} ({textUser.Id}) написал сообщение: {message.Text}");
+
+                    switch (message.Text.ToLower())
                     {
-                        var message = update.Message;
+                        case "/start":
+                            var inlineButtons = new InlineKeyboardMarkup(
+                                new List<InlineKeyboardButton[]>
+                                {
+                                        new[]
+                                        {
+                                            InlineKeyboardButton.WithCallbackData("Профиль", "b1"),
+                                            InlineKeyboardButton.WithCallbackData("Таблица лидеров", "b2"),
+                                        },
+                                        new[]
+                                        {
+                                            InlineKeyboardButton.WithCallbackData("Просмотр задач", "b3"),
+                                            InlineKeyboardButton.WithCallbackData("Отправить задачу", "b4"),
+                                        }
+                                });
+                            await botClient.SendTextMessageAsync(
+                                message.Chat.Id,
+                                "Что вы хотите?",
+                                replyMarkup: inlineButtons
+                            );
 
-                        var user = message.From;
+                            return;
 
-                        Console.WriteLine($"{user.FirstName} ({user.Id}) написал сообщение: {message.Text}");
+                        default:
+                            if (UserDB.GetUser(message.From.Id).TextMode == UserDB.TextModeEnum.WriteTask)
+                            {
+                                //todo ввод текста задачи
+                            }
+                            else if (UserDB.GetUser(message.From.Id).TextMode == UserDB.TextModeEnum.WriteSolve)
+                            {
+                                //todo ввод текста ответа
+                            }
+                            break;
 
-                        var chat = message.Chat;
-                        await botClient.SendTextMessageAsync(
-                            chat.Id,
-                            message.Text,
-                            replyToMessageId: message.MessageId
-                        );
+                    }
+                    break;
+                case UpdateType.CallbackQuery:
+                    {
+                        var callbackQuery = update.CallbackQuery;
 
+                        var CallbackUser = callbackQuery.From;
+
+                        Console.WriteLine($"{CallbackUser.FirstName} ({CallbackUser.Id}) нажал на: {callbackQuery.Data}");
+                        var chat = callbackQuery.Message.Chat;
+
+                        switch (callbackQuery.Data)
+                        {
+                            case "b1":
+                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
+                                await botClient.SendTextMessageAsync(
+                                    chat.Id,
+                                    MessageBuilder.GetUserProfile(CallbackUser)
+                                );
+                                break;
+                            case "b2":
+                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
+                                await botClient.SendTextMessageAsync(
+                                    chat.Id,
+                                    MessageBuilder.GetLeaderBoard()
+                                );
+                                break;
+                            case "b3":
+                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
+                                await botClient.SendTextMessageAsync(
+                                    chat.Id,
+                                    MessageBuilder.GetTasks()
+                                );
+                                break;
+                            case "b4":
+                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
+                                await botClient.SendTextMessageAsync(
+                                    chat.Id,
+                                    MessageBuilder.SendTaskITF()
+                                );
+                                break;
+
+                        }
                         return;
                     }
             }
