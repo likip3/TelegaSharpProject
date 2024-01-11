@@ -12,7 +12,11 @@ internal class Program
     private static ReceiverOptions _receiverOptions;
     static async Task Main()
     {
+#if DEBUG
         const string tPath = @"../../Token.txt";
+#else
+    const string tPath = @"Token.txt";
+#endif
 
 
         if (!System.IO.File.Exists(tPath))
