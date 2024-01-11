@@ -12,7 +12,6 @@ namespace TelegaSharpProject.Database
         {
 
 
-            await Task.Delay(1);
         }
     }
 }

@@ -13,4 +13,9 @@
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TelegaSharpProject.Domain\TelegaSharpProject.Domain.csproj" />
+    <ProjectReference Include="..\TelegaSharpProject.Infrastructure\TelegaSharpProject.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

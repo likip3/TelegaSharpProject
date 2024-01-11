@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TelegaSharpProject.Bot;
-using TelegaSharpProject.Database;
+using TelegaSharpProject.Domain.Bot;
+using TelegaSharpProject
 
 namespace TelegaSharpProject
 {
