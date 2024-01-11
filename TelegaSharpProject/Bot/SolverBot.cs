@@ -4,7 +4,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace TelegaSharpProject.Domain.Bot;
+namespace TelegaSharpProject.Application.Bot;
 
 internal class SolverBot
 {
