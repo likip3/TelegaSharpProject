@@ -10,7 +10,7 @@ namespace TelegaSharpProject.Application.Bot;
 
 internal class SolverBot
 {
-    private ITelegramBotClient _botClient;
+    public static ITelegramBotClient botClient;
     private ReceiverOptions _receiverOptions;
     public async Task Start()
     {
@@ -32,7 +32,7 @@ internal class SolverBot
         using (var sr = new StreamReader(tPath))
             token = await sr.ReadLineAsync();
 
-        _botClient = new TelegramBotClient(token);
+        botClient = new TelegramBotClient(token);
 
         _receiverOptions = new ReceiverOptions
         {
@@ -45,9 +45,9 @@ internal class SolverBot
         };
         using var cts = new CancellationTokenSource();
 
-        _botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token); //Запускаем
+        botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token); //Запускаем
 
-        var me = await _botClient.GetMeAsync();
+        var me = await botClient.GetMeAsync();
         Console.WriteLine($"{me.FirstName} запущен!");
     }
 
@@ -60,90 +60,29 @@ internal class SolverBot
                 case UpdateType.Message:
 
                     var message = update.Message;
-
                     var textUser = message.From;
-
-                    Console.WriteLine($"{textUser.FirstName} ({textUser.Id}) написал сообщение: {message.Text}");
+                    Console.WriteLine($"{textUser.FirstName} ({textUser.Id}) написал: {message.Text}");
 
                     switch (message.Text.ToLower())
                     {
                         case "/start":
-                            var inlineButtons = new InlineKeyboardMarkup(
-                                new List<InlineKeyboardButton[]>
-                                {
-                                        new[]
-                                        {
-                                            InlineKeyboardButton.WithCallbackData("Профиль", "b1"),
-                                            InlineKeyboardButton.WithCallbackData("Таблица лидеров", "b2"),
-                                        },
-                                        new[]
-                                        {
-                                            InlineKeyboardButton.WithCallbackData("Просмотр задач", "b3"),
-                                            InlineKeyboardButton.WithCallbackData("Отправить задачу", "b4"),
-                                        }
-                                });
-                            await botClient.SendTextMessageAsync(
-                                message.Chat.Id,
-                                "Что вы хотите?",
-                                replyMarkup: inlineButtons
-                            );
-
+                        case "/title":
+                        case "главная":
+                            SolverChat.GetSolverChat(message).ToTitle();
                             return;
 
                         default:
-                            if (UserDB.GetUser(message.From.Id).TextMode == UserDB.TextModeEnum.WriteTask)
-                            {
-                                //todo ввод текста задачи
-                            }
-                            else if (UserDB.GetUser(message.From.Id).TextMode == UserDB.TextModeEnum.WriteSolve)
-                            {
-                                //todo ввод текста ответа
-                            }
-                            break;
+                            SolverChat.GetSolverChat(message).SendInput(message);
+                            return;
 
                     }
-                    break;
                 case UpdateType.CallbackQuery:
                     {
                         var callbackQuery = update.CallbackQuery;
-
                         var CallbackUser = callbackQuery.From;
-
                         Console.WriteLine($"{CallbackUser.FirstName} ({CallbackUser.Id}) нажал на: {callbackQuery.Data}");
-                        var chat = callbackQuery.Message.Chat;
 
-                        switch (callbackQuery.Data)
-                        {
-                            case "b1":
-                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
-                                await botClient.SendTextMessageAsync(
-                                    chat.Id,
-                                    MessageBuilder.GetUserProfile(CallbackUser)
-                                );
-                                break;
-                            case "b2":
-                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
-                                await botClient.SendTextMessageAsync(
-                                    chat.Id,
-                                    MessageBuilder.GetLeaderBoard()
-                                );
-                                break;
-                            case "b3":
-                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
-                                await botClient.SendTextMessageAsync(
-                                    chat.Id,
-                                    MessageBuilder.GetTasks()
-                                );
-                                break;
-                            case "b4":
-                                await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);
-                                await botClient.SendTextMessageAsync(
-                                    chat.Id,
-                                    MessageBuilder.SendTaskITF()
-                                );
-                                break;
-
-                        }
+                        SolverChat.GetSolverChat(callbackQuery).ButtonPressed(callbackQuery);
                         return;
                     }
             }

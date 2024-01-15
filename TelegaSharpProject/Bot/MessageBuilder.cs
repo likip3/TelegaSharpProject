@@ -32,9 +32,19 @@ namespace TelegaSharpProject.Application.Bot
             return "У бобы были 2 рубля, сколько у Бибы сейчас рублей, если он только что вышел из банка Бобы";
         }
 
-        public static string SendTaskITF()
+        public static string SendTask()
         {
             return "Напишите вашу задачу ниже";
+        }
+
+        public static string GetMyTasks(User user)
+        {
+            return $"К сожелению {user.FirstName} — ленивый)";
+        }
+
+        public static string GetAboba()
+        {
+            return "Aboba";
         }
     }
 }
