@@ -27,6 +27,8 @@ namespace TelegaSharpProject.Application.Bot
 
         private ITelegramBotClient bot;
 
+        private int pageNum;
+
         public SolverChat(Chat chat, User user)
         {
             this.chat = chat;
@@ -85,6 +87,10 @@ namespace TelegaSharpProject.Application.Bot
             chatState = ChatState.WaitForCommand;
             switch (callbackQuery.Data)
             {
+                case "toTitle":
+                    await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
+                    ToTitle();
+                    break;
                 case "b1":
                     await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
                     await bot.SendTextMessageAsync(
@@ -100,11 +106,8 @@ namespace TelegaSharpProject.Application.Bot
                     );
                     break;
                 case "b3":
-                    await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
-                    await bot.SendTextMessageAsync(
-                        chat.Id,
-                        MessageBuilder.GetTasks()
-                    );
+                    pageNum = 1;
+                    await SendTasksList(callbackQuery);
                     break;
                 case "b4":
                     await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
@@ -128,8 +131,49 @@ namespace TelegaSharpProject.Application.Bot
                         MessageBuilder.GetAboba()
                     );
                     break;
-
+                case "taskBack":
+                    await BackPageTasks(callbackQuery);
+                    break;
+                case "taskNext":
+                    await NextPageTasks(callbackQuery);
+                    break;
             }
+        }
+
+        private async Task NextPageTasks(CallbackQuery callbackQuery)
+        {
+            await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
+            pageNum++;
+            await bot.EditMessageTextAsync(
+                chat.Id,
+                callbackQuery.Message.MessageId,
+                MessageBuilder.GetTasks(pageNum),
+                replyMarkup: (InlineKeyboardMarkup)MessageBuilder.GetTasksMarkup()
+            );
+        }
+        private async Task BackPageTasks(CallbackQuery callbackQuery)
+        {
+            await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
+            if (pageNum <= 1) return;
+            pageNum--;
+            await bot.EditMessageTextAsync(
+                chat.Id,
+                callbackQuery.Message.MessageId,
+                MessageBuilder.GetTasks(pageNum),
+                replyMarkup: (InlineKeyboardMarkup)MessageBuilder.GetTasksMarkup()
+            );
+        }
+
+
+
+        private async Task SendTasksList(CallbackQuery callbackQuery)
+        {
+            await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
+            await bot.SendTextMessageAsync(
+                chat.Id,
+                MessageBuilder.GetTasks(pageNum),
+                replyMarkup: MessageBuilder.GetTasksMarkup()
+            );
         }
 
         public static SolverChat GetSolverChat(Message message)
@@ -140,13 +184,8 @@ namespace TelegaSharpProject.Application.Bot
             chats.Add(message.Chat.Id,chat);
             return chat;
         }
-        public static SolverChat GetSolverChat(CallbackQuery callback)
-        {
-            if (chats.TryGetValue(callback.Message.Chat.Id, out var solverChat))
-                return solverChat;
-            var chat = new SolverChat(callback.Message.Chat, callback.Message.From);
-            chats.Add(callback.Message.Chat.Id, chat);
-            return chat;
-        }
+
+        public static SolverChat GetSolverChat(CallbackQuery callback) => GetSolverChat(callback.Message);
+
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegaSharpProject.Application.Bot
 {
@@ -27,10 +28,27 @@ namespace TelegaSharpProject.Application.Bot
                    $"Второй Боба";
         }
 
-        public static string GetTasks()
+        public static string GetTasks(int pageNum)
         {
-            return "У бобы были 2 рубля, сколько у Бибы сейчас рублей, если он только что вышел из банка Бобы";
+            var title = $"Страница {pageNum}\n";
+            if(pageNum == 1)
+                return title + "У бобы были 2 рубля, сколько у Бибы сейчас рублей, если он только что вышел из банка Бобы";
+            else
+                return title + "а не";
         }
+        public static IReplyMarkup GetTasksMarkup()
+        {
+            var inlineButtons = new InlineKeyboardMarkup(
+                new List<InlineKeyboardButton>
+                {
+                    InlineKeyboardButton.WithCallbackData("Назад", "taskBack"),
+                    InlineKeyboardButton.WithCallbackData("На Главную", "toTitle"),
+                    InlineKeyboardButton.WithCallbackData("Вперёд", "taskNext"),
+                });
+
+            return inlineButtons;
+        }
+
 
         public static string SendTask()
         {
