@@ -39,11 +39,18 @@ namespace TelegaSharpProject.Application.Bot
         public static IReplyMarkup GetTasksMarkup()
         {
             var inlineButtons = new InlineKeyboardMarkup(
-                new List<InlineKeyboardButton>
+                new List<InlineKeyboardButton[]>
                 {
+                    new[]
+                    {
                     InlineKeyboardButton.WithCallbackData("Назад", "taskBack"),
                     InlineKeyboardButton.WithCallbackData("На Главную", "toTitle"),
                     InlineKeyboardButton.WithCallbackData("Вперёд", "taskNext"),
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData("Сортировка", "sortType"),
+                    },
                 });
 
             return inlineButtons;

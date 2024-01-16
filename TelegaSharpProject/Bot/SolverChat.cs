@@ -18,6 +18,14 @@ namespace TelegaSharpProject.Application.Bot
             WaitForInput,
         }
 
+        public enum SortType
+        {
+            ByTimeUP,
+            ByTimeDOWN,
+            ByRating,
+
+        }
+
         private static Dictionary<long, SolverChat> chats = new();
 
         internal ChatState chatState;
@@ -72,7 +80,7 @@ namespace TelegaSharpProject.Application.Bot
             if(chatState !=  ChatState.WaitForInput) return;
             chatState = ChatState.WaitForCommand;
 
-            //todo запись сообщения
+            //todo запись сообщения в базу
 
             await bot.SendTextMessageAsync(
                 chat.Id,
