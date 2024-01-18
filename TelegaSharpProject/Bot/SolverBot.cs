@@ -1,10 +1,10 @@
-﻿using TelegaSharpProject.Domain;
+﻿using System.Reflection;
+using TelegaSharpProject.Application.Bot.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegaSharpProject.Application.Bot;
 
@@ -12,6 +12,8 @@ internal class SolverBot
 {
     public static ITelegramBotClient botClient;
     private ReceiverOptions _receiverOptions;
+
+    private Dictionary<string, MethodInfo> commandsDictionary = new();
     public async Task Start()
     {
 #if DEBUG
@@ -45,10 +47,29 @@ internal class SolverBot
         };
         using var cts = new CancellationTokenSource();
 
+        LoadCommands();
+
         botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token); //Запускаем
 
         var me = await botClient.GetMeAsync();
         Console.WriteLine($"{me.FirstName} запущен!");
+    }
+
+    private void LoadCommands()
+    {
+        var classType = new CommandModule();
+        var methods = classType.GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(Command), false).Length > 0)
+            .ToArray();
+
+        foreach (var method in methods)
+        {
+            commandsDictionary.Add(method.GetCustomAttribute<Command>().command.ToLower(), method);
+            if(method.GetCustomAttribute<Command>().aliases.Length > 0)
+                foreach (var alias in method.GetCustomAttribute<Command>().aliases)
+                {
+                    commandsDictionary.Add(alias.ToLower(), method);
+                }
+        }
     }
 
     private async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
@@ -58,23 +79,21 @@ internal class SolverBot
             switch (update.Type)
             {
                 case UpdateType.Message:
-
-                    var message = update.Message;
-                    var textUser = message.From;
-                    Console.WriteLine($"{textUser.FirstName} ({textUser.Id}) написал: {message.Text}");
-
-                    switch (message.Text.ToLower())
                     {
-                        case "/start":
-                        case "/title":
-                        case "главная":
-                            SolverChat.GetSolverChat(message).ToTitle();
-                            return;
+                        var message = update.Message;
+                        var textUser = message.From;
+                        Console.WriteLine($"{textUser.FirstName} ({textUser.Id}) написал: {message.Text}");
 
-                        default:
+                        if (commandsDictionary.TryGetValue(message.Text.ToLower(), out var method))
+                        {
+                            CommandExecuter.ExecuteCommand(method,message, null);
+                            //CommandExecuter.ExecuteCommand(method,message, new object[] { "messege" });
+                        }
+                        else
+                        {
                             SolverChat.GetSolverChat(message).SendInput(message);
-                            return;
-
+                        }
+                        return;
                     }
                 case UpdateType.CallbackQuery:
                     {

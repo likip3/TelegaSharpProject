@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TelegaSharpProject.Domain\TelegaSharpProject.Domain.csproj" />
-    <ProjectReference Include="..\TelegaSharpProject.Infrastructure\TelegaSharpProject.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
