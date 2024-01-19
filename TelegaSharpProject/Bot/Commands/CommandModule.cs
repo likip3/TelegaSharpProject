@@ -11,13 +11,13 @@ namespace TelegaSharpProject.Application.Bot.Commands
 {
     public class CommandModule
     {
-        [Command("/title", new[] { "главная","/start" })]
+        [SolverCommand("/title", new[] { "главная","/start" })]
         public void ToTitle(Message ctx)
         {
             SolverChat.GetSolverChat(ctx).ToTitle();
         }
 
-        [Command("/leaders", new[] { "лидеры", })]
+        [SolverCommand("/leaders", new[] { "лидеры", })]
         public void ToLeaders(Message ctx)
         {
             SolverBot.botClient.SendTextMessageAsync(
@@ -26,7 +26,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
             );
         }
 
-        [Command("/mytasks")]
+        [SolverCommand("/mytasks")]
         public void ToMyTasks(Message ctx)
         {
             SolverBot.botClient.SendTextMessageAsync(
@@ -35,7 +35,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
             );
         }
 
-        [Command("/tasks")]
+        [SolverCommand("/tasks")]
         public void ToTasks(Message ctx)
         {
             SolverChat.GetSolverChat(ctx).SetPage(1);
@@ -46,7 +46,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
             );
         }
 
-        [Command("/ab")]
+        [SolverCommand("/ab")]
         public void Abobus(Message ctx)
         {
             SolverBot.botClient.SendTextMessageAsync(ctx.Chat.Id, "Сам такой");

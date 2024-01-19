@@ -1,10 +1,12 @@
 ﻿using System.Reflection;
+using TelegaSharpProject.Application.Bot.Buttons.Base;
 using TelegaSharpProject.Application.Bot.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using static TelegaSharpProject.Application.Bot.SolverChat;
 
 namespace TelegaSharpProject.Application.Bot;
 
@@ -13,7 +15,9 @@ internal class SolverBot
     public static ITelegramBotClient botClient;
     private ReceiverOptions _receiverOptions;
 
-    private Dictionary<string, MethodInfo> commandsDictionary = new();
+    public static readonly Dictionary<string, MethodInfo> commandsDict = new();
+    public static readonly Dictionary<string, ButtonBase> buttonsDict = new();
+
     public async Task Start()
     {
 #if DEBUG
@@ -48,6 +52,7 @@ internal class SolverBot
         using var cts = new CancellationTokenSource();
 
         LoadCommands();
+        LoadButtons();
 
         botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token); //Запускаем
 
@@ -58,17 +63,29 @@ internal class SolverBot
     private void LoadCommands()
     {
         var classType = new CommandModule();
-        var methods = classType.GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(Command), false).Length > 0)
+        var methods = classType.GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(SolverCommand), false).Length > 0)
             .ToArray();
 
         foreach (var method in methods)
         {
-            commandsDictionary.Add(method.GetCustomAttribute<Command>().command.ToLower(), method);
-            if(method.GetCustomAttribute<Command>().aliases.Length > 0)
-                foreach (var alias in method.GetCustomAttribute<Command>().aliases)
+            commandsDict.Add(method.GetCustomAttribute<SolverCommand>().Command.ToLower(), method);
+            if(method.GetCustomAttribute<SolverCommand>().Aliases.Length > 0)
+                foreach (var alias in method.GetCustomAttribute<SolverCommand>().Aliases)
                 {
-                    commandsDictionary.Add(alias.ToLower(), method);
+                    commandsDict.Add(alias.ToLower(), method);
                 }
+        }
+    }
+
+    private void LoadButtons()
+    {
+        Type otype = typeof(ButtonBase);
+        IEnumerable<Type> list = Assembly.GetAssembly(otype).GetTypes().Where(type => type.IsSubclassOf(otype));
+
+        foreach (Type itm in list)
+        {
+            var instance = (ButtonBase)Activator.CreateInstance(itm);
+            buttonsDict.Add(instance.Data,instance);
         }
     }
 
@@ -84,7 +101,7 @@ internal class SolverBot
                         var textUser = message.From;
                         Console.WriteLine($"{textUser.FirstName} ({textUser.Id}) написал: {message.Text}");
 
-                        if (commandsDictionary.TryGetValue(message.Text.ToLower(), out var method))
+                        if (commandsDict.TryGetValue(message.Text.ToLower(), out var method))
                         {
                             CommandExecuter.ExecuteCommand(method,message, null);
                             //CommandExecuter.ExecuteCommand(method,message, new object[] { "messege" });
@@ -100,8 +117,11 @@ internal class SolverBot
                         var callbackQuery = update.CallbackQuery;
                         var CallbackUser = callbackQuery.From;
                         Console.WriteLine($"{CallbackUser.FirstName} ({CallbackUser.Id}) нажал на: {callbackQuery.Data}");
+                        GetSolverChat(callbackQuery).chatState = ChatState.WaitForCommand;
 
-                        SolverChat.GetSolverChat(callbackQuery).ButtonPressed(callbackQuery);
+                        if (buttonsDict.TryGetValue(callbackQuery.Data.ToLower(), out var method))
+                            method.Execute(callbackQuery);
+
                         return;
                     }
             }
@@ -110,6 +130,8 @@ internal class SolverBot
         {
             Console.WriteLine(ex.ToString());
         }
+
+        return;
     }
 
     private static Task ErrorHandler(ITelegramBotClient botClient, Exception error, CancellationToken cancellationToken)

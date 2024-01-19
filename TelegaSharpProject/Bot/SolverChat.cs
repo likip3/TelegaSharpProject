@@ -1,4 +1,8 @@
-﻿using Telegram.Bot;
+﻿using System.Reflection;
+using System.Security.Cryptography;
+using TelegaSharpProject.Application.Bot.Buttons.Base;
+using TelegaSharpProject.Application.Bot.Commands;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -25,12 +29,13 @@ namespace TelegaSharpProject.Application.Bot
 
         internal ChatState chatState;
 
-        private Chat chat;
+        internal readonly Chat chat;
         private User user;
 
         private ITelegramBotClient bot;
 
         private int pageNum;
+
 
         public SolverChat(Chat chat, User user)
         {
@@ -39,6 +44,8 @@ namespace TelegaSharpProject.Application.Bot
             chatState = ChatState.WaitForCommand;
             bot = SolverBot.botClient;
         }
+
+
 
         public bool SetPage(int page)
         {
@@ -52,20 +59,20 @@ namespace TelegaSharpProject.Application.Bot
             var inlineButtons = new InlineKeyboardMarkup(
                 new List<InlineKeyboardButton[]>
                 {
-                    new[]
+                    new InlineKeyboardButton[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Профиль", "b1"),
-                        InlineKeyboardButton.WithCallbackData("Таблица лидеров", "b2"),
+                        SolverBot.buttonsDict["profile"],
+                        SolverBot.buttonsDict["leaders"]
                     },
-                    new[]
+                    new InlineKeyboardButton[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Просмотр задач", "b3"),
-                        InlineKeyboardButton.WithCallbackData("Отправить задачу", "b4"),
+                        SolverBot.buttonsDict["viewtasks"],
+                        SolverBot.buttonsDict["sendtask"]
                     },
-                    new[]
+                    new InlineKeyboardButton[]
                     {
-                    InlineKeyboardButton.WithCallbackData("Мои задачи", "b5"),
-                    InlineKeyboardButton.WithCallbackData("???", "b6"),
+                        SolverBot.buttonsDict["mytasks"],
+                        SolverBot.buttonsDict["aboba"]
                 }
                 });
             await bot.SendTextMessageAsync(
@@ -96,10 +103,6 @@ namespace TelegaSharpProject.Application.Bot
             chatState = ChatState.WaitForCommand;
             switch (callbackQuery.Data)
             {
-                case "toTitle":
-                    await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
-                    ToTitle();
-                    break;
                 case "b1":
                     await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
                     await bot.SendTextMessageAsync(
@@ -149,9 +152,8 @@ namespace TelegaSharpProject.Application.Bot
             }
         }
 
-        private async Task NextPageTasks(CallbackQuery callbackQuery)
+        internal async Task NextPageTasks(CallbackQuery callbackQuery)
         {
-            await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
             pageNum++;
             await bot.EditMessageTextAsync(
                 chat.Id,
@@ -160,9 +162,8 @@ namespace TelegaSharpProject.Application.Bot
                 replyMarkup: (InlineKeyboardMarkup)MessageBuilder.GetTasksMarkup()
             );
         }
-        private async Task BackPageTasks(CallbackQuery callbackQuery)
+        internal async Task BackPageTasks(CallbackQuery callbackQuery)
         {
-            await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
             if (pageNum <= 1) return;
             pageNum--;
             await bot.EditMessageTextAsync(
@@ -175,7 +176,7 @@ namespace TelegaSharpProject.Application.Bot
 
 
 
-        private async Task SendTasksList(CallbackQuery callbackQuery)
+        internal async Task SendTasksList(CallbackQuery callbackQuery)
         {
             await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
             await bot.SendTextMessageAsync(

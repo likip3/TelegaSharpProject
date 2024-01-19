@@ -36,15 +36,15 @@ namespace TelegaSharpProject.Application.Bot
             var inlineButtons = new InlineKeyboardMarkup(
                 new List<InlineKeyboardButton[]>
                 {
-                    new[]
+                    new InlineKeyboardButton[]
                     {
-                    InlineKeyboardButton.WithCallbackData("Назад", "taskBack"),
-                    InlineKeyboardButton.WithCallbackData("На Главную", "toTitle"),
-                    InlineKeyboardButton.WithCallbackData("Вперёд", "taskNext"),
+                        SolverBot.buttonsDict["taskback"],
+                    SolverBot.buttonsDict["title"],
+                    SolverBot.buttonsDict["tasknext"],
                     },
-                    new[]
+                    new InlineKeyboardButton[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Сортировка", "sortType"),
+                        SolverBot.buttonsDict["sorttype"],
                     },
                 });
 

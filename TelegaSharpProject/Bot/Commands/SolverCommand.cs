@@ -9,16 +9,16 @@ using Telegram.Bot.Types;
 namespace TelegaSharpProject.Application.Bot.Commands
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class Command : Attribute
+    public class SolverCommand : Attribute
     {
-        public string command;
+        public string Command { get; }
 
-        public string[] aliases = { };
-        public Command(string command, string[] aliases = null)
+        public string[] Aliases = { };
+        public SolverCommand(string command, string[] aliases = null)
         {
-            this.command = command;
+            this.Command = command;
             if(aliases != null)
-                this.aliases = aliases;
+                this.Aliases = aliases;
         }
     }
 }

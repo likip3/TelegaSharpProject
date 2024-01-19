@@ -13,7 +13,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
         public static void ExecuteCommand(MethodInfo method, Message messege , object?[]? parameters)
         {
             //Console.WriteLine(method.Name);
-            //Console.WriteLine(method.GetCustomAttribute<Command>().command);
+            //Console.WriteLine(method.GetCustomAttribute<SolverCommand>().Command);
 
             var pars = new object[] { messege };
             if(parameters != null)
