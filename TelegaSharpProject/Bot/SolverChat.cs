@@ -40,6 +40,12 @@ namespace TelegaSharpProject.Application.Bot
             bot = SolverBot.botClient;
         }
 
+        public bool SetPage(int page)
+        {
+            if(pageNum == page || page < 1) return false;
+            pageNum = page;
+            return true;
+        }
 
         public async void ToTitle()
         {
