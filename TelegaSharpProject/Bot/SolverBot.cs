@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using TelegaSharpProject.Application.Bot.Buttons.Base;
 using TelegaSharpProject.Application.Bot.Commands;
+using TelegaSharpProject.Application.Bot.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -12,25 +13,18 @@ namespace TelegaSharpProject.Application.Bot;
 
 public class SolverBot
 {
-    public static ITelegramBotClient botClient;
-    private ReceiverOptions _receiverOptions;
+    private readonly ReceiverOptions _receiverOptions;
+    public static ITelegramBotClient BotClient { get; set; }
 
     private static readonly Dictionary<string, MethodInfo> CommandsDict = new();
     public static readonly Dictionary<string, ButtonBase> buttonsDict = new();
 
-    public SolverBot(ButtonBase[] buttons)
+    public SolverBot(ButtonBase[] buttons, AppSettings settings)
     {
         foreach (var button in buttons)
             buttonsDict.Add(button.Data, button);
         
-        Console.WriteLine(buttons.Length);
-    }
-
-    public ITelegramBotClient GetClient() => botClient;
-
-    public async Task Start(string token)
-    {
-        botClient = new TelegramBotClient(token);
+        BotClient = new TelegramBotClient(settings.Token);
 
         _receiverOptions = new ReceiverOptions
         {
@@ -41,14 +35,16 @@ public class SolverBot
             },
             ThrowPendingUpdates = true,
         };
-        using var cts = new CancellationTokenSource();
-
+        
         LoadCommands();
-        // LoadButtons();
+    }
 
-        botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
+    public async Task Start()
+    {
+        using var cts = new CancellationTokenSource();
+        BotClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
 
-        var me = await botClient.GetMeAsync();
+        var me = await BotClient.GetMeAsync(cancellationToken: cts.Token);
         Console.WriteLine($"{me.FirstName} запущен!");
     }
 
@@ -66,18 +62,6 @@ public class SolverBot
                 {
                     CommandsDict.Add(alias.ToLower(), method);
                 }
-        }
-    }
-
-    private void LoadButtons()
-    {
-        Type otype = typeof(ButtonBase);
-        IEnumerable<Type> list = Assembly.GetAssembly(otype).GetTypes().Where(type => type.IsSubclassOf(otype));
-
-        foreach (Type itm in list)
-        {
-            var instance = (ButtonBase)Activator.CreateInstance(itm);
-            buttonsDict.Add(instance.Data,instance);
         }
     }
 

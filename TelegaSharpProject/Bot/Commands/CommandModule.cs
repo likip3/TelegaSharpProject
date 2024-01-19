@@ -14,7 +14,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
         [SolverCommand("/leaders", new[] { "лидеры", })]
         public void ToLeaders(Message ctx)
         {
-            SolverBot.botClient.SendTextMessageAsync(
+            SolverBot.BotClient.SendTextMessageAsync(
                 ctx.Chat.Id,
                 MessageBuilder.GetLeaderBoard()
             );
@@ -23,7 +23,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
         [SolverCommand("/mytasks")]
         public void ToMyTasks(Message ctx)
         {
-            SolverBot.botClient.SendTextMessageAsync(
+            SolverBot.BotClient.SendTextMessageAsync(
                 ctx.Chat.Id,
                 MessageBuilder.GetMyTasks(ctx.From)
             );
@@ -33,7 +33,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
         public void ToTasks(Message ctx)
         {
             SolverChat.GetSolverChat(ctx).SetPage(1);
-            SolverBot.botClient.SendTextMessageAsync(
+            SolverBot.BotClient.SendTextMessageAsync(
                 ctx.Chat.Id,
                 MessageBuilder.GetTasks(1),
                 replyMarkup: MessageBuilder.GetTasksMarkup()
@@ -43,7 +43,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
         [SolverCommand("/ab")]
         public void Abobus(Message ctx)
         {
-            SolverBot.botClient.SendTextMessageAsync(ctx.Chat.Id, "Сам такой");
+            SolverBot.BotClient.SendTextMessageAsync(ctx.Chat.Id, "Сам такой");
         }
     }
 }
