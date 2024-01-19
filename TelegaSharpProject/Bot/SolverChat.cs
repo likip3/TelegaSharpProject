@@ -1,8 +1,4 @@
-﻿using System.Reflection;
-using System.Security.Cryptography;
-using TelegaSharpProject.Application.Bot.Buttons.Base;
-using TelegaSharpProject.Application.Bot.Commands;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -22,7 +18,6 @@ namespace TelegaSharpProject.Application.Bot
             ByTimeUP,
             ByTimeDOWN,
             ByRating,
-
         }
 
         private static Dictionary<long, SolverChat> chats = new();
@@ -44,7 +39,7 @@ namespace TelegaSharpProject.Application.Bot
             this.chat = chat;
             this.user = user;
             chatState = ChatState.WaitForCommand;
-            bot = SolverBot.botClient;
+            bot = SolverBot.BotClient;
         }
 
         public bool SetPage(int page)
