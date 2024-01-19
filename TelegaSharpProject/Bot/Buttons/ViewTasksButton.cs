@@ -13,6 +13,11 @@ public class ViewTasksButton : ButtonBase
     {
         var chat = SolverChat.GetSolverChat(ctx);
         chat.SetPage(1);
-        await chat.SendTasksList(ctx);
+        await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id);
+        await BotClient.Value.SendTextMessageAsync(
+            chat.chat,
+            MessageBuilder.GetTasks(chat.PageNum),
+            replyMarkup: MessageBuilder.GetTasksMarkup()
+        );
     }
 }

@@ -36,6 +36,8 @@ namespace TelegaSharpProject.Application.Bot
 
         private int pageNum;
 
+        public int PageNum => pageNum;
+
 
         public SolverChat(Chat chat, User user)
         {
@@ -94,39 +96,6 @@ namespace TelegaSharpProject.Application.Bot
             );
             ToTitle();
             Console.WriteLine($"{message.From.FirstName} ({message.From.Id}) отправил задачу:\n{message.Text}");
-        }
-
-        internal async Task NextPageTasks(CallbackQuery callbackQuery)
-        {
-            pageNum++;
-            await bot.EditMessageTextAsync(
-                chat.Id,
-                callbackQuery.Message.MessageId,
-                MessageBuilder.GetTasks(pageNum),
-                replyMarkup: (InlineKeyboardMarkup)MessageBuilder.GetTasksMarkup()
-            );
-        }
-        
-        internal async Task BackPageTasks(CallbackQuery callbackQuery)
-        {
-            if (pageNum <= 1) return;
-            pageNum--;
-            await bot.EditMessageTextAsync(
-                chat.Id,
-                callbackQuery.Message.MessageId,
-                MessageBuilder.GetTasks(pageNum),
-                replyMarkup: (InlineKeyboardMarkup)MessageBuilder.GetTasksMarkup()
-            );
-        }
-        
-        internal async Task SendTasksList(CallbackQuery callbackQuery)
-        {
-            await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
-            await bot.SendTextMessageAsync(
-                chat.Id,
-                MessageBuilder.GetTasks(pageNum),
-                replyMarkup: MessageBuilder.GetTasksMarkup()
-            );
         }
 
         public static SolverChat GetSolverChat(Message message)
