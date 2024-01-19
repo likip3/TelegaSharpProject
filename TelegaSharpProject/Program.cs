@@ -7,6 +7,7 @@ using Ninject;
 using Ninject.Extensions.Conventions;
 using TelegaSharpProject.Application.Bot;
 using TelegaSharpProject.Application.Bot.Buttons.Base;
+using Telegram.Bot;
 
 namespace TelegaSharpProject
 {
@@ -49,7 +50,7 @@ namespace TelegaSharpProject
             var container = new StandardKernel();
             
             container
-                .Bind(k => k
+                .Bind(c => c
                     .FromThisAssembly()
                     .SelectAllClasses()
                     .InheritedFrom<ButtonBase>()
@@ -59,6 +60,13 @@ namespace TelegaSharpProject
                 .Bind<SolverBot>()
                 .ToSelf()
                 .InSingletonScope();
+
+            container
+                .Bind<ITelegramBotClient>()
+                .ToMethod(c => c
+                    .Kernel
+                    .Get<SolverBot>()
+                    .GetClient());
 
             return container.Get<SolverBot>();
         }

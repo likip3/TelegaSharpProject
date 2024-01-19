@@ -8,12 +8,12 @@ namespace TelegaSharpProject.Application.Bot.Buttons;
 [SolverButton("Профиль", "profile")]
 public class ProfileButton : ButtonBase
 {
-    public ProfileButton(Lazy<SolverBot> bot) : base(bot) { }
+    public ProfileButton(Lazy<SolverBot> botClient) : base(botClient) { }
          
     internal override async void Execute(CallbackQuery ctx)
     {
-        await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
-        await Bot.Value.GetClient().SendTextMessageAsync(
+        await BotClient.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
+        await BotClient.Value.GetClient().SendTextMessageAsync(
             ctx.Message.Chat,
             MessageBuilder.GetUserProfile(ctx.From)
         );

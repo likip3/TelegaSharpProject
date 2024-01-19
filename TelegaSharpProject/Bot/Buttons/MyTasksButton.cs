@@ -7,14 +7,14 @@ namespace TelegaSharpProject.Application.Bot.Buttons;
 [SolverButton("Мои задачи", "mytasks")]
 public class MyTasksButton : ButtonBase
 {
-    public MyTasksButton(Lazy<SolverBot> bot) : base(bot)
+    public MyTasksButton(Lazy<SolverBot> botClient) : base(botClient)
     {
     }
         
     internal override async void Execute(CallbackQuery ctx)
     {
-        await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
-        await Bot.Value.GetClient().SendTextMessageAsync(
+        await BotClient.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
+        await BotClient.Value.GetClient().SendTextMessageAsync(
             ctx.Message.Chat,
             MessageBuilder.GetMyTasks(ctx.From)
         );

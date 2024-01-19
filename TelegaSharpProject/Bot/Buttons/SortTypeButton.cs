@@ -14,11 +14,11 @@ namespace TelegaSharpProject.Application.Bot.Buttons
     {
         internal override async void Execute(CallbackQuery ctx)
         {
-            await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
+            await BotClient.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
             //todo
         }
 
-        public SortTypeButton(Lazy<SolverBot> bot) : base(bot)
+        public SortTypeButton(Lazy<SolverBot> botClient) : base(botClient)
         {
         }
     }

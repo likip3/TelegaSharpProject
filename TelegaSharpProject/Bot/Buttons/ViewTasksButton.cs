@@ -13,7 +13,7 @@ public class ViewTasksButton : ButtonBase
         await chat.SendTasksList(ctx);
     }
 
-    public ViewTasksButton(Lazy<SolverBot> bot) : base(bot)
+    public ViewTasksButton(Lazy<SolverBot> botClient) : base(botClient)
     {
     }
 }

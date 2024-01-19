@@ -9,11 +9,11 @@ namespace TelegaSharpProject.Application.Bot.Buttons
     {
         internal override async void Execute(CallbackQuery ctx)
         {
-            await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
+            await BotClient.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
             SolverChat.GetSolverChat(ctx).ToTitle();
         }
 
-        public TitleButton(Lazy<SolverBot> bot) : base(bot)
+        public TitleButton(Lazy<SolverBot> botClient) : base(botClient)
         {
         }
     }

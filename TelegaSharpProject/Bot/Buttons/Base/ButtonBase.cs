@@ -12,15 +12,15 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Base
 {
     public abstract class ButtonBase
     {
-        protected readonly Lazy<SolverBot> Bot;
+        protected readonly Lazy<ITelegramBotClient> BotClient;
         internal readonly string Data;
         private readonly string Text;
         
         internal abstract void Execute(CallbackQuery ctx);
 
-        internal ButtonBase(Lazy<SolverBot> bot)
+        internal ButtonBase(Lazy<ITelegramBotClient> botClient)
         {
-            Bot = bot;
+            BotClient = botClient;
             
             var attributes = GetType().GetCustomAttributes(typeof(SolverButton), true);
             if (attributes.Length > 0)
