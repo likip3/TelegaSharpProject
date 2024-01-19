@@ -18,31 +18,15 @@ internal class SolverBot
     public static readonly Dictionary<string, MethodInfo> commandsDict = new();
     public static readonly Dictionary<string, ButtonBase> buttonsDict = new();
 
-    public async Task Start()
+    public async Task Start(string token)
     {
-#if DEBUG
-        const string tPath = @"../../Token.txt";
-#else
-    const string tPath = @"Token.txt";
-#endif
 
-
-        if (!System.IO.File.Exists(tPath))
-        {
-            Console.WriteLine("No Token");
-            await Task.Delay(5000);
-            Environment.Exit(1);
-        }
-
-        string? token;
-        using (var sr = new StreamReader(tPath))
-            token = await sr.ReadLineAsync();
 
         botClient = new TelegramBotClient(token);
 
         _receiverOptions = new ReceiverOptions
         {
-            AllowedUpdates = new[] // https://core.telegram.org/bots/api#update
+            AllowedUpdates = new[]
             {
                 UpdateType.Message,
                 UpdateType.CallbackQuery,
@@ -54,7 +38,7 @@ internal class SolverBot
         LoadCommands();
         LoadButtons();
 
-        botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token); //Запускаем
+        botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
 
         var me = await botClient.GetMeAsync();
         Console.WriteLine($"{me.FirstName} запущен!");
