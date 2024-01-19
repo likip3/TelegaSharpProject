@@ -10,12 +10,16 @@ using Telegram.Bot.Types;
 namespace TelegaSharpProject.Application.Bot.Buttons
 {
     [SolverButton("Назад", "taskback")]
-    internal class TaskBackButton : ButtonBase
+    public class TaskBackButton : ButtonBase
     {
         internal override async void Execute(CallbackQuery ctx)
         {
-            await bot.AnswerCallbackQueryAsync(ctx.Id);
-            SolverChat.GetSolverChat(ctx).BackPageTasks(ctx);
+            await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
+            await SolverChat.GetSolverChat(ctx).BackPageTasks(ctx);
+        }
+
+        public TaskBackButton(Lazy<SolverBot> bot) : base(bot)
+        {
         }
     }
 }

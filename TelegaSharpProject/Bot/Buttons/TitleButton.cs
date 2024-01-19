@@ -5,12 +5,16 @@ using Telegram.Bot.Types;
 namespace TelegaSharpProject.Application.Bot.Buttons
 {
     [SolverButton("Главная","title")]
-    internal class TitleButton : ButtonBase
+    public class TitleButton : ButtonBase
     {
         internal override async void Execute(CallbackQuery ctx)
         {
-            await bot.AnswerCallbackQueryAsync(ctx.Id);
+            await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
             SolverChat.GetSolverChat(ctx).ToTitle();
+        }
+
+        public TitleButton(Lazy<SolverBot> bot) : base(bot)
+        {
         }
     }
 }

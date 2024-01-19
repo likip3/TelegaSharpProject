@@ -45,8 +45,6 @@ namespace TelegaSharpProject.Application.Bot
             bot = SolverBot.botClient;
         }
 
-
-
         public bool SetPage(int page)
         {
             if(pageNum == page || page < 1) return false;
@@ -98,60 +96,6 @@ namespace TelegaSharpProject.Application.Bot
             Console.WriteLine($"{message.From.FirstName} ({message.From.Id}) отправил задачу:\n{message.Text}");
         }
 
-        public async void ButtonPressed(CallbackQuery callbackQuery)
-        {
-            chatState = ChatState.WaitForCommand;
-            switch (callbackQuery.Data)
-            {
-                case "b1":
-                    await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
-                    await bot.SendTextMessageAsync(
-                        chat.Id,
-                        MessageBuilder.GetUserProfile(callbackQuery.From)
-                    );
-                    break;
-                case "b2":
-                    await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
-                    await bot.SendTextMessageAsync(
-                        chat.Id,
-                        MessageBuilder.GetLeaderBoard()
-                    );
-                    break;
-                case "b3":
-                    pageNum = 1;
-                    await SendTasksList(callbackQuery);
-                    break;
-                case "b4":
-                    await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
-                    await bot.SendTextMessageAsync(
-                        chat.Id,
-                        MessageBuilder.SendTask()
-                    );
-                    chatState = ChatState.WaitForInput;
-                    break;
-                case "b5":
-                    await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
-                    await bot.SendTextMessageAsync(
-                        chat.Id,
-                        MessageBuilder.GetMyTasks(callbackQuery.From)
-                    );
-                    break;
-                case "b6":
-                    await bot.AnswerCallbackQueryAsync(callbackQuery.Id);
-                    await bot.SendTextMessageAsync(
-                        chat.Id,
-                        MessageBuilder.GetAboba()
-                    );
-                    break;
-                case "taskBack":
-                    await BackPageTasks(callbackQuery);
-                    break;
-                case "taskNext":
-                    await NextPageTasks(callbackQuery);
-                    break;
-            }
-        }
-
         internal async Task NextPageTasks(CallbackQuery callbackQuery)
         {
             pageNum++;
@@ -162,6 +106,7 @@ namespace TelegaSharpProject.Application.Bot
                 replyMarkup: (InlineKeyboardMarkup)MessageBuilder.GetTasksMarkup()
             );
         }
+        
         internal async Task BackPageTasks(CallbackQuery callbackQuery)
         {
             if (pageNum <= 1) return;
@@ -173,9 +118,7 @@ namespace TelegaSharpProject.Application.Bot
                 replyMarkup: (InlineKeyboardMarkup)MessageBuilder.GetTasksMarkup()
             );
         }
-
-
-
+        
         internal async Task SendTasksList(CallbackQuery callbackQuery)
         {
             await bot.AnswerCallbackQueryAsync(callbackQuery.Id);

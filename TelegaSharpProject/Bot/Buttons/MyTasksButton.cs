@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TelegaSharpProject.Application.Bot.Buttons.Base;
+﻿using TelegaSharpProject.Application.Bot.Buttons.Base;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace TelegaSharpProject.Application.Bot.Buttons
+namespace TelegaSharpProject.Application.Bot.Buttons;
+
+[SolverButton("Мои задачи", "mytasks")]
+public class MyTasksButton : ButtonBase
 {
-    [SolverButton("Мои задачи", "mytasks")]
-    internal class MyTasksButton : ButtonBase
+    public MyTasksButton(Lazy<SolverBot> bot) : base(bot)
     {
-        internal override async void Execute(CallbackQuery ctx)
-        {
-            await bot.AnswerCallbackQueryAsync(ctx.Id);
-            await bot.SendTextMessageAsync(
-                ctx.Message.Chat,
-                MessageBuilder.GetMyTasks(ctx.From)
-            );
-        }
+    }
+        
+    internal override async void Execute(CallbackQuery ctx)
+    {
+        await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
+        await Bot.Value.GetClient().SendTextMessageAsync(
+            ctx.Message.Chat,
+            MessageBuilder.GetMyTasks(ctx.From)
+        );
     }
 }
