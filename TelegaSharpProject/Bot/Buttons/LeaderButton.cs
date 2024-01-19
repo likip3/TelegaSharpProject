@@ -7,13 +7,13 @@ namespace TelegaSharpProject.Application.Bot.Buttons
     [SolverButton("Таблица лидеров","leaders")]
     public class LeaderButton : ButtonBase
     {
-        public LeaderButton(Lazy<SolverBot> botClient) : base(botClient)
+        public LeaderButton(Lazy<ITelegramBotClient> botClient) : base(botClient)
         { }
         
         internal override async void Execute(CallbackQuery ctx)
         {
-            await BotClient.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
-            await BotClient.Value.GetClient().SendTextMessageAsync(
+            await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id);
+            await BotClient.Value.SendTextMessageAsync(
                 ctx.Message.Chat.Id,
                 MessageBuilder.GetLeaderBoard()
             );

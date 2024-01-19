@@ -7,14 +7,12 @@ namespace TelegaSharpProject.Application.Bot.Buttons
     [SolverButton("Главная","title")]
     public class TitleButton : ButtonBase
     {
+        public TitleButton(Lazy<ITelegramBotClient> botClient) : base(botClient) { }
+            
         internal override async void Execute(CallbackQuery ctx)
         {
-            await BotClient.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
+            await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id);
             SolverChat.GetSolverChat(ctx).ToTitle();
-        }
-
-        public TitleButton(Lazy<SolverBot> botClient) : base(botClient)
-        {
         }
     }
 }
