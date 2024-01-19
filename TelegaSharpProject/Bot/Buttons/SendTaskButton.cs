@@ -8,19 +8,22 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using static TelegaSharpProject.Application.Bot.SolverChat;
 
-namespace TelegaSharpProject.Application.Bot.Buttons
+namespace TelegaSharpProject.Application.Bot.Buttons;
+
+[SolverButton("Отправить задачу", "sendtask")]
+public class SendTaskButton : ButtonBase
 {
-    [SolverButton("Отправить задачу", "sendtask")]
-    internal class SendTaskButton : ButtonBase
+    public SendTaskButton(Lazy<SolverBot> bot) : base(bot)
     {
-        internal override async void Execute(CallbackQuery ctx)
-        {
-            await bot.AnswerCallbackQueryAsync(ctx.Id);
-            await bot.SendTextMessageAsync(
+    }
+        
+    internal override async void Execute(CallbackQuery ctx)
+    {
+        await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
+        await Bot.Value.GetClient().SendTextMessageAsync(
             ctx.Message.Chat.Id,
-                MessageBuilder.SendTask()
-            );
-            GetSolverChat(ctx).chatState = ChatState.WaitForInput;
-        }
+            MessageBuilder.SendTask()
+        );
+        GetSolverChat(ctx).chatState = ChatState.WaitForInput;
     }
 }

@@ -14,6 +14,7 @@ namespace TelegaSharpProject.Application.Bot.Commands
         public string Command { get; }
 
         public string[] Aliases = { };
+        
         public SolverCommand(string command, string[] aliases = null)
         {
             this.Command = command;

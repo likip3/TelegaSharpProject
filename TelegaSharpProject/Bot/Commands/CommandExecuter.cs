@@ -10,12 +10,12 @@ namespace TelegaSharpProject.Application.Bot.Commands
 {
     public static class CommandExecuter
     {
-        public static void ExecuteCommand(MethodInfo method, Message messege , object?[]? parameters)
+        public static void ExecuteCommand(MethodInfo method, Message message , object?[]? parameters)
         {
             //Console.WriteLine(method.Name);
             //Console.WriteLine(method.GetCustomAttribute<SolverCommand>().Command);
 
-            var pars = new object[] { messege };
+            var pars = new object[] { message };
             if(parameters != null)
                 pars = pars.Concat(parameters).ToArray();
 

@@ -10,17 +10,18 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Base
 {
-    internal abstract class ButtonBase
+    public abstract class ButtonBase
     {
-        protected ITelegramBotClient bot = SolverBot.botClient;
-
+        protected readonly Lazy<SolverBot> Bot;
         internal readonly string Data;
-
-        internal string Text;
+        private readonly string Text;
+        
         internal abstract void Execute(CallbackQuery ctx);
 
-        internal ButtonBase()
+        internal ButtonBase(Lazy<SolverBot> bot)
         {
+            Bot = bot;
+            
             var attributes = GetType().GetCustomAttributes(typeof(SolverButton), true);
             if (attributes.Length > 0)
             {

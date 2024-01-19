@@ -10,12 +10,16 @@ using Telegram.Bot.Types;
 namespace TelegaSharpProject.Application.Bot.Buttons
 {
     [SolverButton("Сортировка", "sorttype")]
-    internal class SortTypeButton : ButtonBase
+    public class SortTypeButton : ButtonBase
     {
         internal override async void Execute(CallbackQuery ctx)
         {
-            await bot.AnswerCallbackQueryAsync(ctx.Id);
+            await Bot.Value.GetClient().AnswerCallbackQueryAsync(ctx.Id);
             //todo
+        }
+
+        public SortTypeButton(Lazy<SolverBot> bot) : base(bot)
+        {
         }
     }
 }

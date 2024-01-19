@@ -10,18 +10,26 @@ using static TelegaSharpProject.Application.Bot.SolverChat;
 
 namespace TelegaSharpProject.Application.Bot;
 
-internal class SolverBot
+public class SolverBot
 {
     public static ITelegramBotClient botClient;
     private ReceiverOptions _receiverOptions;
 
-    public static readonly Dictionary<string, MethodInfo> commandsDict = new();
+    private static readonly Dictionary<string, MethodInfo> CommandsDict = new();
     public static readonly Dictionary<string, ButtonBase> buttonsDict = new();
+
+    public SolverBot(ButtonBase[] buttons)
+    {
+        foreach (var button in buttons)
+            buttonsDict.Add(button.Data, button);
+        
+        Console.WriteLine(buttons.Length);
+    }
+
+    public ITelegramBotClient GetClient() => botClient;
 
     public async Task Start(string token)
     {
-
-
         botClient = new TelegramBotClient(token);
 
         _receiverOptions = new ReceiverOptions
@@ -36,7 +44,7 @@ internal class SolverBot
         using var cts = new CancellationTokenSource();
 
         LoadCommands();
-        LoadButtons();
+        // LoadButtons();
 
         botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
 
@@ -52,11 +60,11 @@ internal class SolverBot
 
         foreach (var method in methods)
         {
-            commandsDict.Add(method.GetCustomAttribute<SolverCommand>().Command.ToLower(), method);
+            CommandsDict.Add(method.GetCustomAttribute<SolverCommand>().Command.ToLower(), method);
             if(method.GetCustomAttribute<SolverCommand>().Aliases.Length > 0)
                 foreach (var alias in method.GetCustomAttribute<SolverCommand>().Aliases)
                 {
-                    commandsDict.Add(alias.ToLower(), method);
+                    CommandsDict.Add(alias.ToLower(), method);
                 }
         }
     }
@@ -85,9 +93,9 @@ internal class SolverBot
                         var textUser = message.From;
                         Console.WriteLine($"{textUser.FirstName} ({textUser.Id}) написал: {message.Text}");
 
-                        if (commandsDict.TryGetValue(message.Text.ToLower(), out var method))
+                        if (CommandsDict.TryGetValue(message.Text.ToLower(), out var method))
                         {
-                            CommandExecuter.ExecuteCommand(method,message, null);
+                            CommandExecuter.ExecuteCommand(method, message, null);
                             //CommandExecuter.ExecuteCommand(method,message, new object[] { "messege" });
                         }
                         else
