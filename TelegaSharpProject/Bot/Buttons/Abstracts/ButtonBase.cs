@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -16,7 +10,7 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Base
         internal readonly string Data;
         private readonly string Text;
         
-        internal abstract void Execute(CallbackQuery ctx);
+        internal abstract Task Execute(CallbackQuery ctx);
 
         internal ButtonBase(Lazy<ITelegramBotClient> botClient)
         {
