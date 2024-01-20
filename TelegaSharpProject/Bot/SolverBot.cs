@@ -2,6 +2,7 @@
 using TelegaSharpProject.Application.Bot.Buttons.Base;
 using TelegaSharpProject.Application.Bot.Commands;
 using TelegaSharpProject.Application.Bot.Settings;
+using TelegaSharpProject.Domain;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -37,6 +38,34 @@ public class SolverBot
         };
         
         LoadCommands();
+
+
+        //test();
+    }
+
+    private async static void test()
+    {
+        var test = new DBWorker();
+
+        await test.RegisterUser(123123123L, "likop");
+
+        var user = await test.GetUserInfoAsync(123123123L);
+
+        Console.WriteLine($"{user.Id},{user.RegisteredAt},   {user.UserName}");
+
+
+        test.SendTaskAsync(123123123L, "Были жили 2 дедлайна...");
+
+        //test.Test(123123123l, 0);
+
+        var task = await test.GetUserTaskAsync(123123123L, 0);
+
+        Console.WriteLine($"{task.Id},{task.Text},   {task.Topicaster.UserName}");
+
+        test.CommentTask(task.Id, 123123123L, "Ну ты и абобус");
+
+        var comm = test.GetCommentsToTask(task.Id).Result[0];
+        Console.WriteLine($"{comm.Id},{comm.Text},   {comm.ByUser.UserName}");
     }
 
     public async Task Start()
