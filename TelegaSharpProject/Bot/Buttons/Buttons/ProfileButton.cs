@@ -1,11 +1,12 @@
-﻿using TelegaSharpProject.Application.Bot.Buttons.Base;
+﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
+using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 
 [SolverButton("Профиль", "profile")]
-public class ProfileButton : ButtonBase
+public class ProfileButton : Button
 {
     public ProfileButton(Lazy<ITelegramBotClient> botClient) : base(botClient) { }
          

@@ -1,4 +1,5 @@
-﻿using TelegaSharpProject.Application.Bot.Buttons.Base;
+﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
+using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -6,7 +7,7 @@ using Telegram.Bot.Types;
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 
 [SolverButton("Главная","title")]
-public class TitleButton : ButtonBase
+public class TitleButton : Button
 {
     private readonly Lazy<IChatManager> _chatManagerFactory;
     public TitleButton(Lazy<ITelegramBotClient> botClient, Lazy<IChatManager> chatManagerFactory) : base(botClient)

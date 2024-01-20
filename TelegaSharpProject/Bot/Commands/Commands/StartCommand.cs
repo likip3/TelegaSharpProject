@@ -1,11 +1,12 @@
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
-using TelegaSharpProject.Application.Bot.Commands.Interfaces;
+using TelegaSharpProject.Application.Bot.Commands.Abstracts;
+using TelegaSharpProject.Application.Bot.Commands.Attributes;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Commands.Commands;
 
-[Attributes.SolverCommand("/start")]
-public class StartCommand : ICommand
+[SolverCommand("/start")]
+public class StartCommand : Command
 {
     private readonly IChatManager _chatManager;
     
@@ -14,8 +15,11 @@ public class StartCommand : ICommand
         _chatManager = chatManager;
     }
     
-    public void Execute(Message message)
+    public override async void Execute(Message message)
     {
         _chatManager.StartChat(message.Chat);
+
+        if (_chatManager.TryGetChat(message.Chat.Id, out var chat))
+            await chat.ToTitle();
     }
 }

@@ -1,12 +1,13 @@
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
-using TelegaSharpProject.Application.Bot.Commands.Interfaces;
+using TelegaSharpProject.Application.Bot.Commands.Abstracts;
+using TelegaSharpProject.Application.Bot.Commands.Attributes;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Commands.Commands;
 
-[Attributes.SolverCommand("/tasks")]
-public class ToTasksCommand : ICommand
+[SolverCommand("/tasks")]
+public class ToTasksCommand : Command
 {
     private readonly Lazy<ITelegramBotClient> _botClientFactory;
     private readonly IChatManager _chatManager;
@@ -18,9 +19,9 @@ public class ToTasksCommand : ICommand
     }
 
 
-    public async void Execute(Message message)
+    public override async void Execute(Message message)
     {
-        if (_chatManager.TryGetChat(message.Chat.Id, out var chat))
+        if (!_chatManager.TryGetChat(message.Chat.Id, out var chat))
             return;
 
         chat.TrySetPage(1);

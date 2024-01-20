@@ -1,4 +1,5 @@
-﻿using TelegaSharpProject.Application.Bot.Buttons.Base;
+﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
+using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -7,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 
 [SolverButton("Назад", "taskback")]
-public class TaskBackButton : ButtonBase
+public class TaskBackButton : Button
 {
     private readonly Lazy<IChatManager> _chatManagerFactory;
     public TaskBackButton(Lazy<ITelegramBotClient> botClient, Lazy<IChatManager> chatManagerFactory) : base(botClient)

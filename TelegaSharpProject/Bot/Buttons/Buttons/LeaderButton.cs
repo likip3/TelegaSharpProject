@@ -1,11 +1,12 @@
-﻿using TelegaSharpProject.Application.Bot.Buttons.Base;
+﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
+using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using Telegram.Bot.Types;
 using Telegram.Bot;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 
 [SolverButton("Таблица лидеров","leaders")]
-public class LeaderButton : ButtonBase
+public class LeaderButton : Button
 {
     public LeaderButton(Lazy<ITelegramBotClient> botClient) : base(botClient)
     { }

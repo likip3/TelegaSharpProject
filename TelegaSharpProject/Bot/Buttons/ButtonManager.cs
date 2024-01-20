@@ -1,4 +1,4 @@
-using TelegaSharpProject.Application.Bot.Buttons.Base;
+using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
 using TelegaSharpProject.Application.Bot.Buttons.Interfaces;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using Telegram.Bot.Types;
@@ -9,9 +9,9 @@ namespace TelegaSharpProject.Application.Bot.Buttons;
 public class ButtonManager: IButtonManager
 {
     private readonly IChatManager _chatManager;
-    private readonly Dictionary<string, ButtonBase> _buttonsDict = new();
+    private readonly Dictionary<string, Button> _buttonsDict = new();
     
-    public ButtonManager(ButtonBase[] buttons, IChatManager chatManager)
+    public ButtonManager(Button[] buttons, IChatManager chatManager)
     {
         _chatManager = chatManager;
         foreach (var button in buttons)

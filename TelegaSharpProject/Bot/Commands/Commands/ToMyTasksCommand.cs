@@ -1,12 +1,13 @@
-using TelegaSharpProject.Application.Bot.Commands.Interfaces;
+using TelegaSharpProject.Application.Bot.Commands.Abstracts;
+using TelegaSharpProject.Application.Bot.Commands.Attributes;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Commands.Commands;
 
 
-[Attributes.SolverCommand("/mytasks")]
-public class ToMyTasksCommand : ICommand
+[SolverCommand("/mytasks")]
+public class ToMyTasksCommand : Command
 {
     private readonly Lazy<ITelegramBotClient> _botClientfactory;
     
@@ -15,7 +16,7 @@ public class ToMyTasksCommand : ICommand
         _botClientfactory = botClientfactory;
     }
     
-    public async void Execute(Message message)
+    public override async void Execute(Message message)
     {
         await _botClientfactory.Value.SendTextMessageAsync(
             message.Chat.Id,

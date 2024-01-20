@@ -1,13 +1,12 @@
-using TelegaSharpProject.Application.Bot.Chats.Enums;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
+using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Attributes;
-using TelegaSharpProject.Application.Bot.Commands.Interfaces;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Commands.Commands;
 
-[Attributes.SolverCommand("/title")]
-public class ToTitleCommand : ICommand
+[SolverCommand("/title")]
+public class ToTitleCommand : Command
 {
     private readonly IChatManager _chatManager;
     
@@ -16,13 +15,10 @@ public class ToTitleCommand : ICommand
         _chatManager = chatManager;
     }
     
-    public async void Execute(Message message)
+    public override async void Execute(Message message)
     {
         if (_chatManager.TryGetChat(message.Chat.Id, out var chat))
         {
-            if (chat.ChatState != ChatState.WaitForInput)
-                return;
-            
             //todo write in db
             
             await chat.ToTitle();
