@@ -14,7 +14,7 @@ public class TelegaSharpProjectContext : DbContext
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         optionsBuilder.UseNpgsql(
-            connectionString: "Server=localhost;Port=5432;User Id=postgres;Password=solver123;Database=postgres;"
+            connectionString: "Host=ep-curly-dew-a2rdjhqn.eu-central-1.aws.neon.tech;Port=5432;Database=solverDB;Username=likip3;Password=A4ILZ3FtXopO"
         );
             base.OnConfiguring(optionsBuilder);
     }

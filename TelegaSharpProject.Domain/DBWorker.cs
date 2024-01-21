@@ -47,7 +47,7 @@ namespace TelegaSharpProject.Domain
             return new TaskInfo(set[page]);
         }
 
-        public async void CloseTask(long taskID)
+        public async Task CloseTask(long taskID)
         {
             var task = await db.Works.FindAsync(taskID);
             task?.Close();
@@ -55,7 +55,7 @@ namespace TelegaSharpProject.Domain
             await db.SaveChangesAsync();
         }
 
-        public async void CommentTask(long taskID, long byUser, string text)
+        public async Task CommentTask(long taskID, long byUser, string text)
         {
             var user = await db.Users.FindAsync(byUser);
             var comment = new Comment(taskID, user, text);
@@ -73,7 +73,7 @@ namespace TelegaSharpProject.Domain
             return await db.Comments.Where(c => c.ByUser.Id == userID).Select(c => new CommentInfo(c)).ToArrayAsync();
         }
 
-        public async void SendTaskAsync(long byUserID, string task)
+        public async Task SendTaskAsync(long byUserID, string task)
         {
             var user = await db.Users.FindAsync(byUserID);
             var work = new Work(user, task);

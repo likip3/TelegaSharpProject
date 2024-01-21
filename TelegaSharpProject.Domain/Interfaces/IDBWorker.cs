@@ -15,15 +15,15 @@ namespace TelegaSharpProject.Domain.Interfaces
 
         public Task<TaskInfo> GetTaskAsync(int page);
 
-        public void CloseTask(long taskID);
+        public Task CloseTask(long taskID);
 
-        public void CommentTask(long taskID, long byUser, string text);
+        public Task CommentTask(long taskID, long byUser, string text);
 
         public Task<CommentInfo[]> GetCommentsToTask(long taskID);
 
         public  Task<CommentInfo[]> GetCommentsFromUser(long userID);
 
-        public void SendTaskAsync(long byUserID, string task);
+        public Task SendTaskAsync(long byUserID, string task);
 
         public Task RegisterUser(long userId, string userName);
     }
