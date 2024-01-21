@@ -23,17 +23,29 @@ internal static class Program
 {
     private static async Task Main()
     {
-        var solverBot = ConfigureBot();
-            
+        var container = ConfigureApplication();
+        
+        // var solverBot = container.Get<SolverBot>();
         // await solverBot.Start();
 
         await Task.Delay(-1);
     }
 
-    private static SolverBot ConfigureBot()
+    private static StandardKernel ConfigureApplication()
     {
         var container = new StandardKernel();
+
+        ConfigureSettings(container);
+        ConfigureInfrastructure(container);
+        // ConfigureBot(container);
+        
+        Test(container);
             
+        return container;
+    }
+
+    private static void ConfigureBot(IBindingRoot container)
+    {
         container
             .Bind(c => c
                 .FromThisAssembly()
@@ -47,26 +59,7 @@ internal static class Program
                 .SelectAllClasses()
                 .InheritedFrom<Command>()
                 .BindAllBaseClasses());
-            
-        container
-            .Bind<ISettingsManager>()
-            .To<SettingsManager>()
-            .InSingletonScope();
-
-        container
-            .Bind<IConnectionStringProvider>()
-            .ToMethod(c => c
-                .Kernel
-                .Get<ISettingsManager>()
-                .Load());
-
-        container
-            .Bind<ITokenProvider>()
-            .ToMethod(c => c
-                .Kernel
-                .Get<ISettingsManager>()
-                .Load());
-
+        
         container
             .Bind<SolverBot>()
             .ToSelf()
@@ -93,7 +86,10 @@ internal static class Program
             .Bind<IChatManager>()
             .To<ChatManager>()
             .InSingletonScope();
+    }
 
+    private static void ConfigureInfrastructure(IBindingRoot container)
+    {
         container
             .Bind<TelegaSharpProjectContext>()
             .ToSelf()
@@ -103,10 +99,28 @@ internal static class Program
             .Bind<IDBWorker>()
             .To<DBWorker>()
             .InSingletonScope();
-        
-        Test(container);
-            
-        return container.Get<SolverBot>();
+    }
+
+    private static void ConfigureSettings(IBindingRoot container)
+    {
+        container
+            .Bind<ISettingsManager>()
+            .To<SettingsManager>()
+            .InSingletonScope();
+
+        container
+            .Bind<IConnectionStringProvider>()
+            .ToMethod(c => c
+                .Kernel
+                .Get<ISettingsManager>()
+                .Load());
+
+        container
+            .Bind<ITokenProvider>()
+            .ToMethod(c => c
+                .Kernel
+                .Get<ISettingsManager>()
+                .Load());
     }
     
     private static async void Test(IResolutionRoot container)
