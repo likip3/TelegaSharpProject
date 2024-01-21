@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Ninject;
+﻿using Ninject;
 using Ninject.Extensions.Conventions;
 using Ninject.Syntax;
 using TelegaSharpProject.Application.Bot;
@@ -55,7 +54,14 @@ internal static class Program
             .InSingletonScope();
 
         container
-            .Bind<AppSettings>()
+            .Bind<IConnectionStringProvider>()
+            .ToMethod(c => c
+                .Kernel
+                .Get<ISettingsManager>()
+                .Load());
+
+        container
+            .Bind<ITokenProvider>()
             .ToMethod(c => c
                 .Kernel
                 .Get<ISettingsManager>()
@@ -97,8 +103,6 @@ internal static class Program
             .Bind<IDBWorker>()
             .To<DBWorker>()
             .InSingletonScope();
-
-        container.Get<IDBWorker>().GetUserInfoAsync(1);
         
         Test(container);
             
@@ -109,23 +113,19 @@ internal static class Program
     {
         var test = container.Get<IDBWorker>();
 
-        await test.RegisterUser(123123123L, "likop");
-
-        // var user = await test.GetUserInfoAsync(123123123L);
-        //
-        // Console.WriteLine($"{user.Id},{user.RegisteredAt},   {user.UserName}");
-        //
-        // test.SendTaskAsync(123123123L, "Были жили 2 дедлайна...");
-        //
-        // //test.Test(123123123l, 0);
-        //
-        // var task = await test.GetUserTaskAsync(123123123L, 0);
-        //
-        // Console.WriteLine($"{task.Id},{task.Text},   {task.Topicaster.UserName}");
-        //
-        // test.CommentTask(task.Id, 123123123L, "Ну ты и абобус");
-        //
-        // var comm = test.GetCommentsToTask(task.Id).Result[0];
-        // Console.WriteLine($"{comm.Id},{comm.Text},   {comm.ByUser.UserName}");
+        var user = await test.GetUserInfoAsync(123123123L);
+        
+        Console.WriteLine($"{user.Id},{user.RegisteredAt},   {user.UserName}");
+        
+        await test.SendTaskAsync(123123123L, "Были жили 4 дедлайна...");
+        
+        var task = await test.GetUserTaskAsync(123123123L, 4);
+        
+        Console.WriteLine($"{task.Id},{task.Text},   {task.Topicaster.UserName}");
+        
+        await test.CommentTask(task.Id, 123123123L, "Ну ты и абобус");
+        
+        var comm = test.GetCommentsToTask(task.Id).Result[0];
+        Console.WriteLine($"{comm.Id},{comm.Text},   {comm.ByUser.UserName}");
     }
 }

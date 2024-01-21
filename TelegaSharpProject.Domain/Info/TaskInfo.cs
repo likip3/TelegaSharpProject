@@ -32,7 +32,7 @@ namespace TelegaSharpProject.Domain.Info
             Text = work.Task;
         }
 
-        public long Id { get; set; }
+        public long Id { get; }
 
         public User? Topicaster { get; set; }
 

@@ -9,7 +9,7 @@ namespace TelegaSharpProject.Domain.Interfaces
 {
     internal interface ITaskInfo
     {
-        public long Id { get; set; }
+        public long Id { get; }
 
         public User? Topicaster { get; set; }
 

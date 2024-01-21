@@ -1,6 +1,7 @@
 ﻿using TelegaSharpProject.Application.Bot.Buttons.Interfaces;
 using TelegaSharpProject.Application.Bot.Commands.Interfaces;
 using TelegaSharpProject.Application.Bot.Settings;
+using TelegaSharpProject.Application.Bot.Settings.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -17,11 +18,11 @@ public class SolverBot
     
     public ITelegramBotClient BotClient { get; }
 
-    public SolverBot(IButtonManager buttonManager, ICommandExecutor executor, AppSettings settings)
+    public SolverBot(IButtonManager buttonManager, ICommandExecutor executor, ITokenProvider tokenProvider)
     {
         _buttonManager = buttonManager;
         _executor = executor;
-        BotClient = new TelegramBotClient(settings.Token);
+        BotClient = new TelegramBotClient(tokenProvider.Token);
 
         _receiverOptions = new ReceiverOptions
         {

@@ -26,5 +26,7 @@ namespace TelegaSharpProject.Domain.Interfaces
         public Task SendTaskAsync(long byUserID, string task);
 
         public Task RegisterUser(long userId, string userName);
+
+        public Task<TaskInfo> GetUserTaskAsync(long userID, int page);
     }
 }
