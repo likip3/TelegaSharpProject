@@ -17,8 +17,6 @@ namespace TelegaSharpProject.Application.Bot
             var userScore = 10;
             var userTasks = 2;
 
-
-
             return $"Это ваш профиль, {user.FirstName}\n" +
                    $"У вас {userScore} очков\n" +
                    $"И {userTasks} выполненые задачи";

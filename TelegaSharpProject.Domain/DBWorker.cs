@@ -8,21 +8,16 @@ namespace TelegaSharpProject.Domain
 {
     public class DBWorker : IDBWorker
     {
-        private TelegaSharpProjectContext db;
+        private readonly TelegaSharpProjectContext _db;
 
-        public DBWorker()
+        public DBWorker(TelegaSharpProjectContext db)
         {
-            Connect();
-        }
-
-        private void Connect()
-        {
-            db = new TelegaSharpProjectContext();
+            _db = db;
         }
 
         public async Task<UserInfo> GetUserInfoAsync(long userId)
         {
-            var user = await db.Users.FindAsync(userId);
+            var user = await _db.Users.FindAsync(userId);
 
             if (user is null)
                 user = await CreateUserAsync(userId, userId.ToString().Remove(6, userId.ToString().Length - 1));
@@ -32,54 +27,54 @@ namespace TelegaSharpProject.Domain
 
         public async Task<UserInfo[]> GetLeaderBoardAsync()
         {
-            return await db.Users.OrderBy(u => u.Points).Take(10).Select(u => new UserInfo(u)).ToArrayAsync();
+            return await _db.Users.OrderBy(u => u.Points).Take(10).Select(u => new UserInfo(u)).ToArrayAsync();
         }
 
         public async Task<TaskInfo> GetTaskAsync(int page)
         {
-            var set = await db.Works.OrderBy(w => w.TopicStart).ToArrayAsync();
+            var set = await _db.Works.OrderBy(w => w.TopicStart).ToArrayAsync();
             return new TaskInfo(set[page]);
         }
 
-        public async Task<TaskInfo> GetUserTaskAsync(long userID, int page)
+        public async Task<TaskInfo> GetUserTaskAsync(long userId, int page)
         {
-            var set = await db.Works.Where(t => t.Topicaster.Id == userID).OrderBy(w => w.TopicStart).ToArrayAsync();
+            var set = await _db.Works.Where(t => t.Topicaster.Id == userId).OrderBy(w => w.TopicStart).ToArrayAsync();
             return new TaskInfo(set[page]);
         }
 
-        public async void CloseTask(long taskID)
+        public async void CloseTask(long taskId)
         {
-            var task = await db.Works.FindAsync(taskID);
+            var task = await _db.Works.FindAsync(taskId);
             task?.Close();
-            db.Works.Update(task);
-            await db.SaveChangesAsync();
+            _db.Works.Update(task);
+            await _db.SaveChangesAsync();
         }
 
-        public async void CommentTask(long taskID, long byUser, string text)
+        public async void CommentTask(long taskId, long byUser, string text)
         {
-            var user = await db.Users.FindAsync(byUser);
-            var comment = new Comment(taskID, user, text);
-            await db.Comments.AddAsync(comment);
-            await db.SaveChangesAsync();
+            var user = await _db.Users.FindAsync(byUser);
+            var comment = new Comment(taskId, user, text);
+            await _db.Comments.AddAsync(comment);
+            await _db.SaveChangesAsync();
         }
 
-        public async Task<CommentInfo[]> GetCommentsToTask(long taskID)
+        public async Task<CommentInfo[]> GetCommentsToTask(long taskId)
         {
-            return await db.Comments.Where(c => c.TaskID == taskID).Select(c => new CommentInfo(c)).ToArrayAsync();
+            return await _db.Comments.Where(c => c.TaskID == taskId).Select(c => new CommentInfo(c)).ToArrayAsync();
         }
 
-        public async Task<CommentInfo[]> GetCommentsFromUser(long userID)
+        public async Task<CommentInfo[]> GetCommentsFromUser(long userId)
         {
-            return await db.Comments.Where(c => c.ByUser.Id == userID).Select(c => new CommentInfo(c)).ToArrayAsync();
+            return await _db.Comments.Where(c => c.ByUser.Id == userId).Select(c => new CommentInfo(c)).ToArrayAsync();
         }
 
-        public async void SendTaskAsync(long byUserID, string task)
+        public async void SendTaskAsync(long byUserId, string task)
         {
-            var user = await db.Users.FindAsync(byUserID);
+            var user = await _db.Users.FindAsync(byUserId);
             var work = new Work(user, task);
 
-            await db.Works.AddAsync(work);
-            await db.SaveChangesAsync();
+            await _db.Works.AddAsync(work);
+            await _db.SaveChangesAsync();
         }
 
         public async Task RegisterUser(long userId, string userName) => await CreateUserAsync(userId, userName);
@@ -87,14 +82,14 @@ namespace TelegaSharpProject.Domain
         private async Task<User> CreateUserAsync(long userId, string userName)
         {
             var user = new User(userId, userName);
-            await db.Users.AddAsync(user);
-            await db.SaveChangesAsync();
+            await _db.Users.AddAsync(user);
+            await _db.SaveChangesAsync();
             return user;
         }
 
         public void Dispose()
         {
-            db.Dispose();
+            _db.Dispose();
         }
     }
 }
