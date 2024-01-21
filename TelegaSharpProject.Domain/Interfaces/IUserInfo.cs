@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 
 namespace TelegaSharpProject.Domain.Interfaces
 {
-    internal interface IUserInfo
+    public interface IUserInfo
     {
         public long Id { get; set; }
 
-        public string? UserName { get; set; }
+        public string UserName { get; }
 
-        public DateTime RegisteredAt { get; set; }
+        public DateTime? RegisteredAt { get; }
 
-        public int Points { get; set; }
+        public int? Points { get; }
+        
+        public int? CompletedTasks { get; }
     }
 }

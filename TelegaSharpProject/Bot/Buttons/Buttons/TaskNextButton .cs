@@ -1,6 +1,7 @@
 ﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
 using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
+using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -11,7 +12,10 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 public class TaskNextButton : Button
 {
     private readonly Lazy<IChatManager> _chatManagerFactory;
-    public TaskNextButton(Lazy<ITelegramBotClient> botClient, Lazy<IChatManager> chatManagerFactory) : base(botClient)
+    public TaskNextButton(
+        Lazy<ITelegramBotClient> botClient,
+        IMessageBuilder messageBuilder,
+        Lazy<IChatManager> chatManagerFactory) : base(botClient, messageBuilder)
     {
         _chatManagerFactory = chatManagerFactory;
     }
@@ -28,8 +32,8 @@ public class TaskNextButton : Button
         await BotClient.Value.EditMessageTextAsync(
             chat.Chat,
             ctx.Message.MessageId,
-            MessageBuilder.GetTasks(chat.PageNum),
-            replyMarkup: (InlineKeyboardMarkup)MessageBuilder.GetTasksMarkup()
+            MessageBuilder1.GetTasks(chat.PageNum),
+            replyMarkup: (InlineKeyboardMarkup)MessageBuilder1.GetTasksMarkup()
         );
     }
 }

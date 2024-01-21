@@ -1,5 +1,5 @@
 using TelegaSharpProject.Application.Bot.Settings.Interfaces;
-using TelegaSharpProject.Infrastructure.Data;
+using TelegaSharpProject.Infrastructure.Data.Interfaces;
 
 namespace TelegaSharpProject.Application.Bot.Settings;
 

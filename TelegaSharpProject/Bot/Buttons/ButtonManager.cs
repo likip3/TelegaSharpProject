@@ -15,13 +15,13 @@ public class ButtonManager: IButtonManager
     {
         _chatManager = chatManager;
         foreach (var button in buttons)
-            _buttonsDict.Add(button.Data, button);
+            _buttonsDict.Add(button.SolverButton.Data, button);
     }
 
     public async Task Execute(CallbackQuery ctx)
     {
         if (!_chatManager.TryGetChat(ctx.Message.Chat.Id, out var chat))
-            return;
+            chat = _chatManager.StartChat(ctx.Message.Chat);
         
         chat.SetToCommandState();
         

@@ -1,6 +1,7 @@
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Attributes;
+using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -12,7 +13,10 @@ public class ToTasksCommand : Command
     private readonly Lazy<ITelegramBotClient> _botClientFactory;
     private readonly IChatManager _chatManager;
 
-    public ToTasksCommand(Lazy<ITelegramBotClient> botClientFactory, IChatManager chatManager)
+    public ToTasksCommand(
+        Lazy<ITelegramBotClient> botClientFactory,
+        IChatManager chatManager,
+        IMessageBuilder messageBuilder) : base(messageBuilder)
     {
         _botClientFactory = botClientFactory;
         _chatManager = chatManager;
@@ -28,7 +32,7 @@ public class ToTasksCommand : Command
         
         await _botClientFactory.Value.SendTextMessageAsync(
             message.Chat.Id,
-            MessageBuilder.GetTasks(1),
-            replyMarkup: MessageBuilder.GetTasksMarkup());
+            MessageBuilder1.GetTasks(1),
+            replyMarkup: MessageBuilder1.GetTasksMarkup());
     }
 }

@@ -1,6 +1,7 @@
 ﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
 using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
+using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -10,7 +11,10 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 public class TitleButton : Button
 {
     private readonly Lazy<IChatManager> _chatManagerFactory;
-    public TitleButton(Lazy<ITelegramBotClient> botClient, Lazy<IChatManager> chatManagerFactory) : base(botClient)
+    public TitleButton(
+        Lazy<ITelegramBotClient> botClient, 
+        IMessageBuilder messageBuilder,
+        Lazy<IChatManager> chatManagerFactory) : base(botClient, messageBuilder)
     {
         _chatManagerFactory = chatManagerFactory;
     }

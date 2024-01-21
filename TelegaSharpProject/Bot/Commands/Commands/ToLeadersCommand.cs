@@ -1,5 +1,6 @@
 using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Attributes;
+using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -10,7 +11,9 @@ public class ToLeadersCommand : Command
 {
     private readonly Lazy<ITelegramBotClient> _botClientFactory;
     
-    public ToLeadersCommand(Lazy<ITelegramBotClient> botClientFactory)
+    public ToLeadersCommand(
+        Lazy<ITelegramBotClient> botClientFactory,
+        IMessageBuilder messageBuilder) : base(messageBuilder)
     {
         _botClientFactory = botClientFactory;
     }
@@ -19,6 +22,6 @@ public class ToLeadersCommand : Command
     {
         await _botClientFactory.Value.SendTextMessageAsync(
             message.Chat.Id,
-            MessageBuilder.GetLeaderBoard());
+            MessageBuilder1.GetLeaderBoard());
     }
 }

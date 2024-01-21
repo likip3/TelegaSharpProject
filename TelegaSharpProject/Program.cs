@@ -10,11 +10,15 @@ using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using TelegaSharpProject.Application.Bot.Commands;
 using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Interfaces;
+using TelegaSharpProject.Application.Bot.MessageBuilder;
+using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using TelegaSharpProject.Application.Bot.Settings;
 using TelegaSharpProject.Application.Bot.Settings.Interfaces;
 using TelegaSharpProject.Domain;
+using TelegaSharpProject.Domain.Info;
 using TelegaSharpProject.Domain.Interfaces;
 using TelegaSharpProject.Infrastructure.Data;
+using TelegaSharpProject.Infrastructure.Data.Interfaces;
 using Telegram.Bot;
 
 namespace TelegaSharpProject.Application;
@@ -25,8 +29,8 @@ internal static class Program
     {
         var container = ConfigureApplication();
         
-        // var solverBot = container.Get<SolverBot>();
-        // await solverBot.Start();
+        var solverBot = container.Get<SolverBot>();
+        await solverBot.Start();
 
         await Task.Delay(-1);
     }
@@ -37,9 +41,9 @@ internal static class Program
 
         ConfigureSettings(container);
         ConfigureInfrastructure(container);
-        // ConfigureBot(container);
+        ConfigureBot(container);
         
-        Test(container);
+        // Test(container);
             
         return container;
     }
@@ -86,6 +90,11 @@ internal static class Program
             .Bind<IChatManager>()
             .To<ChatManager>()
             .InSingletonScope();
+
+        container
+            .Bind<IMessageBuilder>()
+            .To<MessageBuilder>()
+            .InSingletonScope();
     }
 
     private static void ConfigureInfrastructure(IBindingRoot container)
@@ -127,13 +136,15 @@ internal static class Program
     {
         var test = container.Get<IDBWorker>();
 
-        var user = await test.GetUserInfoAsync(123123123L);
+        // await test.RegisterUser(123123123L, "fdsajfdsaj");
+
+        var user = await test.GetUserInfoAsync(new UserInfo(123L, "fsadfsa"));
         
         Console.WriteLine($"{user.Id},{user.RegisteredAt},   {user.UserName}");
         
         await test.SendTaskAsync(123123123L, "Были жили 4 дедлайна...");
         
-        var task = await test.GetUserTaskAsync(123123123L, 4);
+        var task = await test.GetUserTaskAsync(123123123L, 0);
         
         Console.WriteLine($"{task.Id},{task.Text},   {task.Topicaster.UserName}");
         

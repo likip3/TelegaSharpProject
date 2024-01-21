@@ -9,7 +9,7 @@ namespace TelegaSharpProject.Domain.Interfaces
 {
     public interface IDBWorker : IDisposable
     {
-        public Task<UserInfo> GetUserInfoAsync(long userId);
+        public Task<UserInfo> GetUserInfoAsync(IUserInfo userInfo);
 
         public Task<UserInfo[]> GetLeaderBoardAsync();
 

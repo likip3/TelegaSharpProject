@@ -6,17 +6,13 @@ namespace TelegaSharpProject.Infrastructure.Models;
 [Table("users")]
 public class User
 {
-    public User()
-    {
-    }
-    public User(long id, string UserName)
+    public User(long id, string userName)
     {
         Id = id;
         RegisteredAt = DateTime.Now;
         Points = 0;
-        this.UserName = UserName;
+        UserName = userName;
     }
-
 
     [Key]
     [Column("id")]
@@ -24,8 +20,9 @@ public class User
     public long Id { get; set; }
     
     [Column("user_name")]
+    [MaxLength(50)]
     [Required]
-    public string? UserName { get; set; }
+    public string UserName { get; set; }
 
     //[Column("tg_user_name")]
     //public string? TgUserName { get; set; }

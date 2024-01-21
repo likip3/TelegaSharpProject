@@ -1,6 +1,7 @@
 ﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
 using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
+using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -10,7 +11,10 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 public class ViewTasksButton : Button
 {
     private readonly Lazy<IChatManager> _chatManagerFactory;
-    public ViewTasksButton(Lazy<ITelegramBotClient> botClient, Lazy<IChatManager> chatManagerFactory) : base(botClient)
+    public ViewTasksButton(
+        Lazy<ITelegramBotClient> botClient, 
+        IMessageBuilder messageBuilder,
+        Lazy<IChatManager> chatManagerFactory) : base(botClient, messageBuilder)
     {
         _chatManagerFactory = chatManagerFactory;
     }
@@ -25,8 +29,8 @@ public class ViewTasksButton : Button
         await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id);
         await BotClient.Value.SendTextMessageAsync(
             chat.Chat,
-            MessageBuilder.GetTasks(chat.PageNum),
-            replyMarkup: MessageBuilder.GetTasksMarkup()
+            MessageBuilder1.GetTasks(chat.PageNum),
+            replyMarkup: MessageBuilder1.GetTasksMarkup()
         );
     }
 }

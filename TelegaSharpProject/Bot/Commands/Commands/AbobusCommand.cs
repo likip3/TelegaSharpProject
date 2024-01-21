@@ -1,5 +1,6 @@
 using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Attributes;
+using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -10,7 +11,9 @@ public class AbobusCommand : Command
 {
     private readonly Lazy<ITelegramBotClient> _botClientFactory;
     
-    public AbobusCommand(Lazy<ITelegramBotClient> botClientFactory)
+    public AbobusCommand(
+        Lazy<ITelegramBotClient> botClientFactory,
+        IMessageBuilder messageBuilder) : base(messageBuilder)
     {
         _botClientFactory = botClientFactory;
     }

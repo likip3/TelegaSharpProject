@@ -4,10 +4,10 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegaSharpProject.Application.Bot
 {
-    internal class MessageBuilder
+    internal class MessageBuilder1
     {
         private readonly IButtonManager _buttonManager;
-        public MessageBuilder(IButtonManager buttonManager)
+        public MessageBuilder1(IButtonManager buttonManager)
         {
             _buttonManager = buttonManager;
         }

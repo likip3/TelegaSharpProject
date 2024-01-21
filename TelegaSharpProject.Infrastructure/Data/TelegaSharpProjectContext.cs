@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TelegaSharpProject.Infrastructure.Data.Interfaces;
 using TelegaSharpProject.Infrastructure.Models;
 
 namespace TelegaSharpProject.Infrastructure.Data;
@@ -23,7 +24,6 @@ public class TelegaSharpProjectContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
         base.OnModelCreating(modelBuilder);
     }
 

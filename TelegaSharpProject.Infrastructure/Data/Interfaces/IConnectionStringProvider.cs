@@ -1,4 +1,4 @@
-namespace TelegaSharpProject.Infrastructure.Data;
+namespace TelegaSharpProject.Infrastructure.Data.Interfaces;
 
 public interface IConnectionStringProvider
 {

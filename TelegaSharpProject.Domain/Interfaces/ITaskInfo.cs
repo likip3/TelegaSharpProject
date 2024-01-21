@@ -7,7 +7,7 @@ using TelegaSharpProject.Infrastructure.Models;
 
 namespace TelegaSharpProject.Domain.Interfaces
 {
-    internal interface ITaskInfo
+    public interface ITaskInfo
     {
         public long Id { get; }
 

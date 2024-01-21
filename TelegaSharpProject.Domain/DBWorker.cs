@@ -15,14 +15,14 @@ namespace TelegaSharpProject.Domain
             _db = db;
         }
 
-        public async Task<UserInfo> GetUserInfoAsync(long userId)
+        public async Task<UserInfo> GetUserInfoAsync(IUserInfo userInfo)
         {
-            var user = await _db.Users.FindAsync(userId);
+            var user = await _db.Users.FindAsync(userInfo.Id) 
+                       ?? await CreateUserAsync(userInfo.Id, userInfo.UserName);
 
-            if (user is null)
-                user = await CreateUserAsync(userId, userId.ToString().Remove(6, userId.ToString().Length - 1));
-
-            return new UserInfo(user);
+            return new UserInfo(
+                user, 
+                (await GetUserTasksAsync(userInfo.Id)).Count(task => task.Done));
         }
 
         public async Task<UserInfo[]> GetLeaderBoardAsync()
@@ -36,6 +36,15 @@ namespace TelegaSharpProject.Domain
             return new TaskInfo(set[page]);
         }
 
+        private async Task<TaskInfo[]> GetUserTasksAsync(long userID)
+        {
+            return await _db.Works
+                .Where(t => t.Topicaster.Id == userID)
+                .OrderBy(w => w.TopicStart)
+                .Select(task => new TaskInfo(task))
+                .ToArrayAsync();
+        }
+        
         public async Task<TaskInfo> GetUserTaskAsync(long userID, int page)
         {
             var set = await _db.Works.Where(t => t.Topicaster.Id == userID).OrderBy(w => w.TopicStart).ToArrayAsync();
