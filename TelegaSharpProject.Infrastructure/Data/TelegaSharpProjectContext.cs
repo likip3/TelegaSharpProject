@@ -5,15 +5,30 @@ namespace TelegaSharpProject.Infrastructure.Data;
 
 public class TelegaSharpProjectContext : DbContext
 {
-    public TelegaSharpProjectContext (DbContextOptions<TelegaSharpProjectContext> options)
-        : base(options)
+    //public TelegaSharpProjectContext (DbContextOptions<TelegaSharpProjectContext> options)
+    //    : base(options)
+    //{
+    //}
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        optionsBuilder.UseNpgsql(
+            connectionString: "Server=localhost;Port=5432;User Id=postgres;Password=solver123;Database=postgres;"
+        );
+            base.OnConfiguring(optionsBuilder);
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<User> Users => Set<User>();
-    public DbSet<Discipline> Disciplines => Set<Discipline>();
-    public DbSet<Rating> Ratings => Set<Rating>();
+    //public DbSet<Discipline> Disciplines => Set<Discipline>();
+    //public DbSet<Rating> Ratings => Set<Rating>();
     public DbSet<Work> Works => Set<Work>();
-    public DbSet<Message> Messages => Set<Message>();
-    public DbSet<Dialog> Dialogs => Set<Dialog>();
+    public DbSet<Comment> Comments => Set<Comment>();
+    //public DbSet<Dialog> Dialogs => Set<Dialog>();
 }

@@ -1,66 +1,88 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ninject;
+﻿using Ninject;
 using Ninject.Extensions.Conventions;
 using TelegaSharpProject.Application.Bot;
-using TelegaSharpProject.Application.Bot.Buttons.Base;
+using TelegaSharpProject.Application.Bot.Buttons;
+using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
+using TelegaSharpProject.Application.Bot.Buttons.Interfaces;
+using TelegaSharpProject.Application.Bot.Chats;
+using TelegaSharpProject.Application.Bot.Chats.Interfaces;
+using TelegaSharpProject.Application.Bot.Commands;
+using TelegaSharpProject.Application.Bot.Commands.Abstracts;
+using TelegaSharpProject.Application.Bot.Commands.Interfaces;
+using TelegaSharpProject.Application.Bot.Settings;
+using TelegaSharpProject.Application.Bot.Settings.Interfaces;
+using Telegram.Bot;
 
-namespace TelegaSharpProject
+namespace TelegaSharpProject.Application;
+
+internal static class Program
 {
-    internal class Program
+    private static async Task Main()
     {
-        private static async Task Main()
-        {
-            var solverBot = ConfigureBot();
-            var token = await GetToken();
+        var solverBot = ConfigureBot();
             
-            await solverBot.Start(token);
+        await solverBot.Start();
 
-            await Task.Delay(-1);
-        }
+        await Task.Delay(-1);
+    }
 
-        private static async Task<string> GetToken()
-        {
-#if DEBUG
-            const string tPath = @"../../Token.txt";
-#else
-    const string tPath = @"Token.txt";
-#endif
-
-
-            if (!System.IO.File.Exists(tPath))
-            {
-                Console.WriteLine("No Token");
-                await Task.Delay(5000);
-                Environment.Exit(1);
-            }
+    private static SolverBot ConfigureBot()
+    {
+        var container = new StandardKernel();
             
-            using var sr = new StreamReader(tPath);
+        container
+            .Bind(c => c
+                .FromThisAssembly()
+                .SelectAllClasses()
+                .InheritedFrom<Button>()
+                .BindAllBaseClasses());
+
+        container
+            .Bind(c => c
+                .FromThisAssembly()
+                .SelectAllClasses()
+                .InheritedFrom<Command>()
+                .BindAllBaseClasses());
             
-            return await sr.ReadLineAsync() 
-                   ?? throw new FormatException();
-        }
+        container
+            .Bind<ISettingsManager>()
+            .To<SettingsManager>()
+            .InSingletonScope();
 
-        private static SolverBot ConfigureBot()
-        {
-            var container = new StandardKernel();
+        container
+            .Bind<AppSettings>()
+            .ToMethod(c => c
+                .Kernel
+                .Get<ISettingsManager>()
+                .Load());
+
+        container
+            .Bind<SolverBot>()
+            .ToSelf()
+            .InSingletonScope();
             
-            container
-                .Bind(k => k
-                    .FromThisAssembly()
-                    .SelectAllClasses()
-                    .InheritedFrom<ButtonBase>()
-                    .BindAllBaseClasses());
+        container
+            .Bind<ITelegramBotClient>()
+            .ToMethod(c => c
+                .Kernel
+                .Get<SolverBot>()
+                .BotClient);
 
-            container
-                .Bind<SolverBot>()
-                .ToSelf()
-                .InSingletonScope();
+        container
+            .Bind<ICommandExecutor>()
+            .To<CommandExecutor>()
+            .InSingletonScope();
 
-            return container.Get<SolverBot>();
-        }
+        container
+            .Bind<IButtonManager>()
+            .To<ButtonManager>()
+            .InSingletonScope();
+
+        container
+            .Bind<IChatManager>()
+            .To<ChatManager>()
+            .InSingletonScope();
+            
+        return container.Get<SolverBot>();
     }
 }

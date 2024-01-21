@@ -4,5 +4,5 @@ namespace TelegaSharpProject.Application.Bot.Commands.Interfaces;
 
 public interface ICommandExecutor
 {
-    public void Execute(Message message);
+    public Task Execute(Message message);
 }

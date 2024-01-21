@@ -1,10 +1,17 @@
-﻿using Telegram.Bot.Types;
+﻿using TelegaSharpProject.Application.Bot.Buttons.Interfaces;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegaSharpProject.Application.Bot
 {
-    internal static class MessageBuilder
+    internal class MessageBuilder
     {
+        private readonly IButtonManager _buttonManager;
+        public MessageBuilder(IButtonManager buttonManager)
+        {
+            _buttonManager = buttonManager;
+        }
+        
         public static string GetUserProfile(User user)
         {
             var userScore = 10;
@@ -33,20 +40,23 @@ namespace TelegaSharpProject.Application.Bot
         }
         public static IReplyMarkup GetTasksMarkup()
         {
+            //todo 
             var inlineButtons = new InlineKeyboardMarkup(
-                new List<InlineKeyboardButton[]>
-                {
-                    new InlineKeyboardButton[]
-                    {
-                        SolverBot.buttonsDict["taskback"],
-                    SolverBot.buttonsDict["title"],
-                    SolverBot.buttonsDict["tasknext"],
-                    },
-                    new InlineKeyboardButton[]
-                    {
-                        SolverBot.buttonsDict["sorttype"],
-                    },
-                });
+                // new List<InlineKeyboardButton[]>
+                // {
+                //     new InlineKeyboardButton[]
+                //     {
+                //         SolverBot.buttonsDict["taskback"],
+                //     SolverBot.buttonsDict["title"],
+                //     SolverBot.buttonsDict["tasknext"],
+                //     },
+                //     new InlineKeyboardButton[]
+                //     {
+                //         SolverBot.buttonsDict["sorttype"],
+                //     },
+                // }
+                Enumerable.Empty<InlineKeyboardButton>()
+                );
 
             return inlineButtons;
         }

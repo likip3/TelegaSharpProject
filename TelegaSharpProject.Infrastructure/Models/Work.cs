@@ -6,21 +6,41 @@ namespace TelegaSharpProject.Infrastructure.Models;
 [Table("works")]
 public class Work
 {
+    public Work()
+    {
+    }
+    public Work(User? topicaster, string task)
+    {
+        Topicaster = topicaster;
+        Task = task;
+        TopicStart = DateTime.Now;
+        var gb = Guid.NewGuid().ToByteArray();
+        Id = BitConverter.ToInt64(gb, 0);
+        Price = 5;
+    }
+
+    public void Close()
+    {
+        MentorEnd = DateTime.Now;
+        Done = true;
+    }
+
     [Key]
     [Column("id")]
     [Required]
-    public int Id { get; set; }
+    public long Id { get; set; }
     
     [Required]
-    [Column("mentor")]
-    public User? MentorUser { get; set; }
-    
-    [Column("mentored_user")]
-    public User? MentoredUser { get; set; }
-    
+    [Column("topicaster")]
+    public User? Topicaster { get; set; }
+
     [Required]
-    [Column("mentor_start")]
-    public DateTime MentorStart { get; set; }
+    [Column("task")]
+    public string Task { get; set; }
+
+    [Required]
+    [Column("topic_start")]
+    public DateTime TopicStart { get; set; }
     
     [Column("mentor_end")]
     public DateTime MentorEnd { get; set; }
@@ -33,7 +53,7 @@ public class Work
     [Column("done")]
     public bool Done { get; set; }
     
-    [Required]
-    [Column("discipline")]
-    public Discipline? Discipline { get; set; }
+    //[Required]
+    //[Column("discipline")]
+    //public Discipline? Discipline { get; set; }
 }
