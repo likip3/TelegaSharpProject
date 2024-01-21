@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace TelegaSharpProject.Application.Bot.Buttons.Base
+namespace TelegaSharpProject.Application.Bot.Buttons.Abstracts
 {
-    public abstract class ButtonBase
+    public abstract class Button
     {
         protected readonly Lazy<ITelegramBotClient> BotClient;
         internal readonly string Data;
         private readonly string Text;
         
-        internal abstract void Execute(CallbackQuery ctx);
+        internal abstract Task Execute(CallbackQuery ctx);
 
-        internal ButtonBase(Lazy<ITelegramBotClient> botClient)
+        internal Button(Lazy<ITelegramBotClient> botClient)
         {
             BotClient = botClient;
             
@@ -26,6 +21,8 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Base
             if (attributes.Length > 0)
             {
                 var solverButton = attributes[0] as SolverButton;
+                
+                //todo to field
                 Data = solverButton.Data.ToLower();
                 Text = solverButton.Text;
             }
@@ -35,7 +32,7 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Base
             }
         }
 
-        public static implicit operator InlineKeyboardButton(ButtonBase button)
+        public static implicit operator InlineKeyboardButton(Button button)
         {
             return InlineKeyboardButton.WithCallbackData(button.Text, button.Data);
         }

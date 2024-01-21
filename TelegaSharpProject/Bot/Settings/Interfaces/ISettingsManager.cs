@@ -1,4 +1,4 @@
-namespace TelegaSharpProject.Application.Bot.SettingsManager;
+namespace TelegaSharpProject.Application.Bot.Settings.Interfaces;
 
 public interface ISettingsManager
 {
