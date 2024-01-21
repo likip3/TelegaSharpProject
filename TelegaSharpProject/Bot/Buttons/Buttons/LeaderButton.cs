@@ -16,10 +16,11 @@ public class LeaderButton : Button
         
     internal override async Task Execute(CallbackQuery ctx)
     {
-        await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id);
+        ShowLoading(ctx);
+        
         await BotClient.Value.SendTextMessageAsync(
             ctx.Message.Chat.Id,
-            MessageBuilder1.GetLeaderBoard()
+            await Builder.GetLeaderBoard()
         );
     }
 }

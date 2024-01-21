@@ -22,6 +22,6 @@ public class ToLeadersCommand : Command
     {
         await _botClientFactory.Value.SendTextMessageAsync(
             message.Chat.Id,
-            MessageBuilder1.GetLeaderBoard());
+            await MessageBuilder.GetLeaderBoard());
     }
 }

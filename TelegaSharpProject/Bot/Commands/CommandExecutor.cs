@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using TelegaSharpProject.Application.Bot.Chats.Enums;
+﻿using TelegaSharpProject.Application.Bot.Chats.Enums;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Interfaces;
@@ -22,7 +21,6 @@ namespace TelegaSharpProject.Application.Bot.Commands
                     _commands[command.SolverCommand.Name] = command;
                 else
                     _commandsNotIndexed[command.SolverCommand.Name] = command;
-
             }
         }
 

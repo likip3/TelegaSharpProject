@@ -11,13 +11,13 @@ namespace TelegaSharpProject.Domain.Interfaces
     {
         public long Id { get; }
 
-        public User? Topicaster { get; set; }
+        public User? TopicCreator { get; set; }
 
 
         public DateTime TopicStart { get; set; }
 
 
-        public DateTime MentorEnd { get; set; }
+        public DateTime? MentorEnd { get; set; }
 
 
         public double Price { get; set; }

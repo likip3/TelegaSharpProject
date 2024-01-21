@@ -11,31 +11,16 @@ namespace TelegaSharpProject.Application.Bot
         {
             _buttonManager = buttonManager;
         }
-        
-        public static string GetUserProfile(User user)
-        {
-            var userScore = 10;
-            var userTasks = 2;
-
-            return $"Это ваш профиль, {user.FirstName}\n" +
-                   $"У вас {userScore} очков\n" +
-                   $"И {userTasks} выполненые задачи";
-        }
-
-        public static string GetLeaderBoard()
-        {
-            return $"Первый Биба\n" +
-                   $"Второй Боба";
-        }
 
         public static string GetTasks(int pageNum)
         {
             var title = $"Страница {pageNum}\n";
             if(pageNum == 1)
                 return title + "У бобы были 2 рубля, сколько у Бибы сейчас рублей, если он только что вышел из банка Бобы";
-            else
-                return title + "а не";
+            
+            return title + "а не";
         }
+        
         public static IReplyMarkup GetTasksMarkup()
         {
             //todo 

@@ -8,11 +8,11 @@ public abstract class Command
 {
     public SolverCommand SolverCommand { get; }
     
-    private readonly IMessageBuilder _messageBuilder;
+    protected IMessageBuilder MessageBuilder { get; }
 
     public Command(IMessageBuilder messageBuilder)
     {
-        _messageBuilder = messageBuilder;
+        MessageBuilder = messageBuilder;
         var attributes = GetType().GetCustomAttributes(typeof(SolverCommand), true);
         if (attributes.Length > 0)
         {

@@ -8,7 +8,7 @@ namespace TelegaSharpProject.Domain.Info
         public TaskInfo(long id, User? topicaster, DateTime topicStart, double price, string text)
         {
             Id = id;
-            Topicaster = topicaster;
+            TopicCreator = topicaster;
             TopicStart = topicStart;
             Price = price;
             Text = text;
@@ -17,7 +17,7 @@ namespace TelegaSharpProject.Domain.Info
         public TaskInfo(Work work)
         {
             Id = work.Id;
-            Topicaster = work.Topicaster;
+            TopicCreator = work.TopicCreator;
             TopicStart = work.TopicStart;
             Price = work.Price;
             MentorEnd = work.MentorEnd;
@@ -27,13 +27,13 @@ namespace TelegaSharpProject.Domain.Info
 
         public long Id { get; }
 
-        public User? Topicaster { get; set; }
+        public User? TopicCreator { get; set; }
 
 
         public DateTime TopicStart { get; set; }
 
 
-        public DateTime MentorEnd { get; set; }
+        public DateTime? MentorEnd { get; set; }
 
         public string Text { get; set; }
 

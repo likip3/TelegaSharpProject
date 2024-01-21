@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using Microsoft.EntityFrameworkCore;
+using Ninject;
 using Ninject.Extensions.Conventions;
 using Ninject.Syntax;
 using TelegaSharpProject.Application.Bot;
@@ -108,6 +109,11 @@ internal static class Program
             .Bind<IDBWorker>()
             .To<DBWorker>()
             .InSingletonScope();
+
+        container
+            .Bind<DbContext>()
+            .To<TelegaSharpProjectContext>()
+            .InSingletonScope();
     }
 
     private static void ConfigureSettings(IBindingRoot container)
@@ -136,21 +142,21 @@ internal static class Program
     {
         var test = container.Get<IDBWorker>();
 
-        // await test.RegisterUser(123123123L, "fdsajfdsaj");
+        // await test.TryRegisterUser(123123123L, "fdsajfdsaj");
 
-        var user = await test.GetUserInfoAsync(new UserInfo(123L, "fsadfsa"));
-        
-        Console.WriteLine($"{user.Id},{user.RegisteredAt},   {user.UserName}");
-        
-        await test.SendTaskAsync(123123123L, "Были жили 4 дедлайна...");
-        
-        var task = await test.GetUserTaskAsync(123123123L, 0);
-        
-        Console.WriteLine($"{task.Id},{task.Text},   {task.Topicaster.UserName}");
-        
-        await test.CommentTask(task.Id, 123123123L, "Ну ты и абобус");
-        
-        var comm = test.GetCommentsToTask(task.Id).Result[0];
-        Console.WriteLine($"{comm.Id},{comm.Text},   {comm.ByUser.UserName}");
+        // var user = await test.GetUserInfoAsync(new UserInfo(123L, "fsadfsa"));
+        //
+        // Console.WriteLine($"{user.Id},{user.RegisteredAt},   {user.UserName}");
+        //
+        // await test.CreateTaskAsync(123123123L, "Были жили 4 дедлайна...");
+        //
+        // var task = await test.GetUserTaskAsync(123123123L, 0);
+        //
+        // Console.WriteLine($"{task.Id},{task.Text},   {task.TopicCreator.UserName}");
+        //
+        // await test.CommentTask(task.Id, 123123123L, "Ну ты и абобус");
+        //
+        // var comm = test.GetCommentsToTask(task.Id).Result[0];
+        // Console.WriteLine($"{comm.Id},{comm.Text},   {comm.ByUser.UserName}");
     }
 }

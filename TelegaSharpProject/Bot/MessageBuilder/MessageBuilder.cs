@@ -15,11 +15,27 @@ public class MessageBuilder : IMessageBuilder
         _worker = worker;
     }
     
-    public async Task<string> GetUserProfile(User user)
+    public async Task<string> GetUserProfile(CallbackQuery ctx)
     {
-        var userInfo = await _worker.GetUserInfoAsync(user.ToUserInfo());
+        var userInfo = await _worker.GetUserInfoAsync(ctx.ToUserInfo());
 
         return
             $"Это ваш профиль, {userInfo.UserName}!\nОчки: {userInfo.Points}\nВыполнено задач: {userInfo.CompletedTasks}";
+    }
+
+    public async Task<string> GetLeaderBoard()
+    {
+        return (await _worker.GetLeaderBoardAsync())
+            .Select((user, i) => $"{i + 1}. {user.UserName}, очки: {user.Points}")
+            .ToStringWithSeparator("\n");
+    }
+
+    public async Task<string> GetTask(int page)
+    {
+        var task = await _worker.GetTaskAsync(page);
+        
+        // if (task.)
+
+        return $"Создатель: {task.TopicCreator.UserName}\n";
     }
 }

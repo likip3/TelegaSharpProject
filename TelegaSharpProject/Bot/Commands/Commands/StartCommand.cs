@@ -19,7 +19,7 @@ public class StartCommand : Command
     
     public override async void Execute(Message message)
     {
-        _chatManager.StartChat(message.Chat);
+        await _chatManager.StartChat(message.Chat, message.From);
 
         if (_chatManager.TryGetChat(message.Chat.Id, out var chat))
             await chat.ToTitle();

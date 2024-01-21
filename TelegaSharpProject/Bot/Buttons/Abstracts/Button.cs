@@ -11,8 +11,8 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Abstracts
         public SolverButton SolverButton { get; }
         
         protected readonly Lazy<ITelegramBotClient> BotClient;
-        protected readonly IMessageBuilder _messageBuilder;
-        
+        protected IMessageBuilder Builder { get; }
+
         internal abstract Task Execute(CallbackQuery ctx);
 
         internal Button(
@@ -20,7 +20,7 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Abstracts
             IMessageBuilder messageBuilder)
         {
             BotClient = botClient;
-            _messageBuilder = messageBuilder;
+            Builder = messageBuilder;
 
             var attributes = GetType().GetCustomAttributes(typeof(SolverButton), true);
             if (attributes.Length > 0)
@@ -37,6 +37,11 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Abstracts
         public static implicit operator InlineKeyboardButton(Button button)
         {
             return InlineKeyboardButton.WithCallbackData(button.SolverButton.Text, button.SolverButton.Data);
+        }
+
+        protected async void ShowLoading(CallbackQuery ctx)
+        {
+            await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id, "Загружаем данные...");
         }
     }
 }

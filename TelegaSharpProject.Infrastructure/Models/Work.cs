@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
 
 namespace TelegaSharpProject.Infrastructure.Models;
 
@@ -9,9 +10,10 @@ public class Work
     public Work()
     {
     }
-    public Work(User? topicaster, string task)
+
+    public Work(User topicCreator, string task)
     {
-        Topicaster = topicaster;
+        TopicCreator = topicCreator;
         Task = task;
         TopicStart = DateTime.Now;
         var gb = Guid.NewGuid().ToByteArray();
@@ -31,8 +33,8 @@ public class Work
     public long Id { get; set; }
     
     [Required]
-    [Column("topicaster")]
-    public User? Topicaster { get; set; }
+    [Column("topic_creator")]
+    public User? TopicCreator { get; set; }
 
     [Required]
     [Column("task")]
@@ -43,17 +45,13 @@ public class Work
     public DateTime TopicStart { get; set; }
     
     [Column("mentor_end")]
-    public DateTime MentorEnd { get; set; }
+    public DateTime? MentorEnd { get; set; }
     
     [Required]
     [Column("price")]
-    public double Price { get; set; }
+    public long Price { get; set; }
     
     [Required]
     [Column("done")]
     public bool Done { get; set; }
-    
-    //[Required]
-    //[Column("discipline")]
-    //public Discipline? Discipline { get; set; }
 }

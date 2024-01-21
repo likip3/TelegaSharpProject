@@ -21,7 +21,7 @@ public class ButtonManager: IButtonManager
     public async Task Execute(CallbackQuery ctx)
     {
         if (!_chatManager.TryGetChat(ctx.Message.Chat.Id, out var chat))
-            chat = _chatManager.StartChat(ctx.Message.Chat);
+            chat = await _chatManager.StartChat(ctx.Message.Chat, ctx.Message.From);
         
         chat.SetToCommandState();
         
@@ -37,18 +37,33 @@ public class ButtonManager: IButtonManager
                 new InlineKeyboardButton[]
                 {
                     _buttonsDict["profile"],
-                    _buttonsDict["leaders"]
+                    _buttonsDict["leaders"],
                 },
                 new InlineKeyboardButton[]
                 {
                     _buttonsDict["viewtasks"],
-                    _buttonsDict["sendtask"]
+                    _buttonsDict["mytasks"],
                 },
                 new InlineKeyboardButton[]
                 {
-                    _buttonsDict["mytasks"],
-                    _buttonsDict["aboba"]
+                    _buttonsDict["sendtask"],
                 }
             });
+    }
+
+    public InlineKeyboardMarkup GetTaskMarkup(bool myTasks = false)
+    {
+        //todo решить
+        return new InlineKeyboardMarkup(
+            new List<InlineKeyboardButton[]>
+            {
+                new InlineKeyboardButton[]
+                {
+                    _buttonsDict["taskback"],
+                    _buttonsDict["title"],
+                    _buttonsDict["tasknext"],
+                }
+            }
+        );
     }
 }

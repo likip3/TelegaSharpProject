@@ -9,11 +9,11 @@ namespace TelegaSharpProject.Domain.Interfaces
 {
     public interface IDBWorker : IDisposable
     {
-        public Task<UserInfo> GetUserInfoAsync(IUserInfo userInfo);
+        public Task<IUserInfo> GetUserInfoAsync(IUserInfo userInfo);
 
-        public Task<UserInfo[]> GetLeaderBoardAsync();
+        public Task<IUserInfo[]> GetLeaderBoardAsync();
 
-        public Task<TaskInfo> GetTaskAsync(int page);
+        public Task<ITaskInfo> GetTaskAsync(int page);
 
         public Task CloseTask(long taskID);
 
@@ -23,9 +23,9 @@ namespace TelegaSharpProject.Domain.Interfaces
 
         public  Task<CommentInfo[]> GetCommentsFromUser(long userID);
 
-        public Task SendTaskAsync(long byUserID, string task);
+        public Task CreateTaskAsync(long byUserID, string task);
 
-        public Task RegisterUser(long userId, string userName);
+        public Task TryRegisterUser(IUserInfo userInfo);
 
         public Task<TaskInfo> GetUserTaskAsync(long userID, int page);
     }

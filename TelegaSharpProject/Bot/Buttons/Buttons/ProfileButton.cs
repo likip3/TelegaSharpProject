@@ -21,7 +21,7 @@ public class ProfileButton : Button
         
         await BotClient.Value.SendTextMessageAsync(
             ctx.Message.Chat,
-            await _messageBuilder.GetUserProfile(ctx.From)
+            await Builder.GetUserProfile(ctx)
         );
     }
 }
