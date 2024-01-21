@@ -33,6 +33,8 @@ public class SolverBot
             },
             ThrowPendingUpdates = true,
         };
+        
+        LoadCommands();
     }
 
     public async Task Start()

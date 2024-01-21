@@ -12,8 +12,9 @@ public class TelegaSharpProjectContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         optionsBuilder.UseNpgsql(
-            connectionString: "Server=localhost;Port=5432;User Id=postgres;Password=solver123;Database=solverdb;"
+            connectionString: "Server=localhost;Port=5432;User Id=postgres;Password=solver123;Database=postgres;"
         );
             base.OnConfiguring(optionsBuilder);
     }
