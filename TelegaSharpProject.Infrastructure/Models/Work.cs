@@ -13,7 +13,7 @@ public class Work
 
     public Work(User topicCreator, string task)
     {
-        TopicCreator = topicCreator.Id;
+        CreatorId = topicCreator.Id;
         Task = task;
         TopicStart = DateTime.Now;
         var gb = Guid.NewGuid().ToByteArray();
@@ -35,7 +35,7 @@ public class Work
     
     [Required]
     [Column("topic_creator")]
-    public long TopicCreator { get; set; }
+    public long CreatorId { get; set; }
 
     [Required]
     [Column("task")]

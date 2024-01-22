@@ -1,23 +1,22 @@
 using TelegaSharpProject.Application.Bot.Chats.Enums;
 using TelegaSharpProject.Application.Bot.Chats.Infos;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
-using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Chats;
 
 public class SolverChat : ISolverChat
 {
-    public SolverChat(Chat chat)
+    public SolverChat(long chatId)
     {
         ChatState = ChatState.WaitForCommand;
-        Chat = chat;
+        ChatId = chatId;
         PageNum = 1;
         TaskChatInfo = new TaskChatInfo();
     } 
     
     public ChatState ChatState { get; private set; }
     public InputType InputType { get; private set; }
-    public Chat Chat { get; }
+    public long ChatId { get; }
     public int PageNum { get; private set; }
     public ITaskChatInfo TaskChatInfo { get; }
 

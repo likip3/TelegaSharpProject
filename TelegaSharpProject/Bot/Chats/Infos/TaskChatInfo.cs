@@ -1,3 +1,4 @@
+using TelegaSharpProject.Application.Bot.Chats.Enums;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using TelegaSharpProject.Domain.Interfaces;
 
@@ -24,6 +25,12 @@ public class TaskChatInfo : ITaskChatInfo
         LastTask = taskInfo;
     }
 
+    public void SetTaskFrom(TaskFrom taskFrom)
+    {
+        TaskFrom = taskFrom;
+    }
+
+    public TaskFrom TaskFrom { get; private set; }
     public ITaskInfo? LastTask { get; private set; }
     public int Page { get; private set; }
 }

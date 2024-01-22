@@ -12,6 +12,6 @@ public class InputCommand : Command
     
     public override async Task Execute(Message message)
     {
-        await MessageServiceFactory.Value.CreateEntity(message);
+        await MessageServiceFactory.Value.CreateEntityAsync(message);
     }
 }

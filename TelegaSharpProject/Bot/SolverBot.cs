@@ -44,7 +44,10 @@ public class SolverBot
         Console.WriteLine($"{me.FirstName} запущен!");
     }
 
-    private async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+    private async Task UpdateHandler(
+        ITelegramBotClient botClient, 
+        Update update,
+        CancellationToken cancellationToken)
     {
         try
         {

@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 
-[SolverButton("Отправить ответ", "comments")]
+[SolverButton("Отправить ответ", "answer")]
 public class AnswerButton : Button
 {
     public AnswerButton(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }
@@ -13,5 +13,7 @@ public class AnswerButton : Button
     internal override async Task ExecuteAsync(CallbackQuery ctx)
     {
         MessageServiceFactory.Value.ShowLoadingAsync(ctx);
+
+        MessageServiceFactory.Value.SendAnswerAsync(ctx.Message.Chat);
     }
 }

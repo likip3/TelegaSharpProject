@@ -11,9 +11,9 @@ namespace TelegaSharpProject.Domain.Interfaces
     {
         public long Id { get; }
 
-        public IUserInfo TopicCreator { get;  }
+        public IUserInfo Creator { get;  }
         
-        public DateTime TopicStart { get; }
+        public DateTime TaskStart { get; }
         
         public DateTime? MentorEnd { get; }
         

@@ -8,8 +8,7 @@ public class TaskInfo : ITaskInfo
     public TaskInfo(Work work)
     {
         Id = work.Id;
-        
-        TopicStart = work.TopicStart;
+        TaskStart = work.TopicStart;
         Price = work.Price;
         MentorEnd = work.MentorEnd;
         Done = work.Done;
@@ -18,14 +17,14 @@ public class TaskInfo : ITaskInfo
 
     public TaskInfo(Work work, User user) : this(work)
     {
-        TopicCreator = new UserInfo(user);
+        Creator = new UserInfo(user);
     }
 
     public long Id { get; }
 
-    public IUserInfo TopicCreator { get; }
+    public IUserInfo Creator { get; }
         
-    public DateTime TopicStart { get; }
+    public DateTime TaskStart { get; }
         
     public DateTime? MentorEnd { get; }
     

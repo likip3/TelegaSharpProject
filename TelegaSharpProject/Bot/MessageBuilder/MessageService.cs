@@ -38,148 +38,171 @@ public class MessageService : IMessageService
             "Загружаем данные...",
             cacheTime: 1);
     }
-    
+
     public async Task ToTitleAsync(Chat chat)
     {
-        ResetChat(chat);
+        ResetChat(chat.Id);
         
-        await BotClient.SendTextMessageAsync(
-            chat.Id,
-            "Что вы хотите?",
-            replyMarkup: ButtonManager.GetTitleButtons()
-        );
+        await SendMessageAsync(chat.Id, "Что вы хотите?");
     }
 
     public async Task UserProfileAsync(Chat chat, User user)
     {
-        ResetChat(chat);
+        ResetChat(chat.Id);
         
         var userInfo = await Worker.GetUserInfoAsync(new UserInfo(user.Id, user.Username, chat.Id));
         
-        await BotClient.SendTextMessageAsync(
-            chat.Id,
-            userInfo.ToMessage(),
-            replyMarkup: ButtonManager.GetTitleButtons()
-        );
+        await SendMessageAsync(chat.Id, userInfo.ToMessage());
     }
 
-    public async Task LeaderBoard(Chat chat)
+    public async Task LeaderBoardAsync(Chat chat)
     {
-        ResetChat(chat);
+        ResetChat(chat.Id);
         
         var leaders = await Worker.GetLeaderBoardAsync();
         
-        await BotClient.SendTextMessageAsync(
-            chat.Id,
-            leaders.ToMessage(),
-            replyMarkup: ButtonManager.GetTitleButtons()
-        );
+        await SendMessageAsync(chat.Id, leaders.ToMessage());
     }
 
-    private async Task<(ITaskInfo, InlineKeyboardMarkup)> GetTask(ISolverChat solverChat, User user)
+    private async Task<(ITaskInfo, InlineKeyboardMarkup)> GetTaskAsync(
+        ISolverChat solverChat,
+        User user,
+        bool fromThisUser = false)
     {
-        var tasks = await Worker.GetTasksAsync(user.Id);
+        var tasks = await Worker.GetTasksAsync(user.Id, fromThisUser);
+        
         var task = tasks[solverChat.TaskChatInfo.Page];
         var markup = ButtonManager.GetTaskMarkup();
 
         return (task, markup);
     }
 
-    public async Task TaskFirstPage(User user, Chat chat)
+    public async Task TaskFirstPageAsync(User user, Chat chat)
     {
-        var solverChat = ChatManager.GetChat(chat);
+        var solverChat = ChatManager.GetChat(chat.Id);
         solverChat.TaskChatInfo.Reset();
+
+        var fromThisUser = solverChat.TaskChatInfo.TaskFrom == TaskFrom.Me;
 
         string message;
         InlineKeyboardMarkup markup;
 
         try
         {
-            (var taskInfo, markup) = await GetTask(solverChat, user);
+            (var taskInfo, markup) = await GetTaskAsync(solverChat, user, fromThisUser);
             solverChat.TaskChatInfo.SetTask(taskInfo);
             
             message = taskInfo.ToMessage();
         }
         catch (IndexOutOfRangeException)
         {
-            message = "На данный момент нет нерешенных задач";
+            message =
+                solverChat.TaskChatInfo.TaskFrom == TaskFrom.Me 
+                    ? "Вы еще не выложили ни одной задачи" 
+                    : "На данный момент нет нерешенных задач";
+            
             markup = ButtonManager.GetTitleButtons();
         }
         
-        await BotClient.SendTextMessageAsync(
-            chat.Id,
-            message,
-            replyMarkup: markup
-        );
+        await SendMessageAsync(chat.Id, message, markup);
     }
 
-    public async Task TaskAnotherPage(User user, Chat chat, int delta)
+    public async Task TaskAnotherPageAsync(User user, Chat chat, int delta)
     {
-        var solverChat = ChatManager.GetChat(chat);
+        var solverChat = ChatManager.GetChat(chat.Id);
         solverChat.TaskChatInfo.TrySetDeltaPage(delta);
+        
+        var fromThisUser = solverChat.TaskChatInfo.TaskFrom == TaskFrom.Me;
 
         try
         {
-            var (taskInfo, markup) = await GetTask(solverChat, user);
+            var (taskInfo, markup) = await GetTaskAsync(solverChat, user, fromThisUser);
             solverChat.TaskChatInfo.SetTask(taskInfo);
             
             var message = taskInfo.ToMessage();
-            
-            await BotClient.SendTextMessageAsync(
-                chat.Id,
-                message,
-                replyMarkup: markup
-            );
+
+            await SendMessageAsync(chat.Id, message, markup);
         }
         catch (IndexOutOfRangeException)
         {
-            await TaskFirstPage(user, chat);
+            await TaskFirstPageAsync(user, chat);
         }
     }
 
-    public async Task CreateEntity(Message message)
+    public async Task CreateEntityAsync(Message message)
     {
-        var solverChat = ChatManager.GetChat(message.Chat);
+        var solverChat = ChatManager.GetChat(message.Chat.Id);
 
         string messageString;
         
         if (solverChat.InputType == InputType.TaskInput)
         {
-            Console.WriteLine(message.From.Id);
-            var taskInfo = await CreateTask(message.From, message.Text);
+            var taskInfo = await CreateTaskAsync(message.From, message.Text);
             messageString = $"Задача создана\n{taskInfo.ToMessage()}";
             solverChat.Reset();
         }
+        else if (solverChat.InputType == InputType.AnswerInput)
+        {
+            var answerInfo = await Worker.CreateAnswerAsync(solverChat.TaskChatInfo.LastTask.Id, message.From.Id, message.Text);
+            messageString = $"Ответ отправлен\n{answerInfo.ToMessage()}";
+            solverChat.Reset();
+
+            var taskInfo = await Worker.GetTaskByIdAsync(answerInfo.TaskId);
+
+            var notification = $"Пришел новый ответ на задание\n\n" +
+                               $"Задание:\n{taskInfo.ToMessage()}\n\n" +
+                               $"Ответ:\n{answerInfo.ToMessage()}";
+
+            SendMessageAsync(taskInfo.Creator.ChatId, notification);
+        }
         else
-        //todo
+        {
+            await ToTitleAsync(message.Chat);
             return;
+        }
         
-        await BotClient.SendTextMessageAsync(
-            message.Chat.Id,
-            messageString,
-            replyMarkup: ButtonManager.GetTitleButtons()
-        );
+        await SendMessageAsync(message.Chat.Id, messageString);
     }
 
-    public async Task SendTask(Chat chat)
+    public async Task SendTaskAsync(Chat chat)
     {
-        var solverChat = ChatManager.GetChat(chat);
+        var solverChat = ChatManager.GetChat(chat.Id);
         solverChat.SetToInputState(InputType.TaskInput);
         
+        await SendMessageAsync(
+            chat.Id, 
+            "Введите текст задания", 
+            new InlineKeyboardMarkup(Enumerable.Empty<InlineKeyboardButton>()));
+    }
+
+    public async Task SendAnswerAsync(Chat chat)
+    {
+        var solverChat = ChatManager.GetChat(chat.Id);
+        solverChat.SetToInputState(InputType.AnswerInput);
+
+        await SendMessageAsync(
+            chat.Id, 
+            "Введите текст ответа",
+            new InlineKeyboardMarkup(Enumerable.Empty<InlineKeyboardButton>()));
+    }
+
+    private async Task SendMessageAsync(long chatId, string message, IReplyMarkup? markup = null)
+    {
         await BotClient.SendTextMessageAsync(
-            chat.Id,
-            "Введите текст задания"
+            chatId,
+            message,
+            replyMarkup: markup ?? ButtonManager.GetTitleButtons()
         );
     }
 
-    private async Task<ITaskInfo> CreateTask(User user, string text)
+    private async Task<ITaskInfo> CreateTaskAsync(User user, string text)
     {
         return await Worker.CreateTaskAsync(user.Id, text);
     }
     
-    private ISolverChat ResetChat(Chat chat)
+    private ISolverChat ResetChat(long chatId)
     {
-        var solverChat = ChatManager.GetChat(chat);
+        var solverChat = ChatManager.GetChat(chatId);
         solverChat.Reset();
 
         return solverChat;

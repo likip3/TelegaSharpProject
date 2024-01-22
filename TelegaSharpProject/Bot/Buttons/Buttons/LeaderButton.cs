@@ -14,6 +14,6 @@ public class LeaderButton : Button
     {
         MessageServiceFactory.Value.ShowLoadingAsync(ctx);
 
-        await MessageServiceFactory.Value.LeaderBoard(ctx.Message.Chat);
+        await MessageServiceFactory.Value.LeaderBoardAsync(ctx.Message.Chat);
     }
 }

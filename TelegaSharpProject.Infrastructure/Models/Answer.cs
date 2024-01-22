@@ -3,19 +3,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TelegaSharpProject.Infrastructure.Models;
 
-[Table("comments")]
+[Table("answers")]
 public class Answer
 {
     public Answer()
     {
     }
 
-    public Answer(long taskId, User? byUser, string? text)
+    public Answer(long taskId, long byUserId, string text)
     {
         TaskId = taskId;
         Text = text;
-        ByUser = byUser;
+        ByUserId = byUserId;
         AnswerTime = DateTime.Now;
+        
         var gb = Guid.NewGuid().ToByteArray();
         Id = BitConverter.ToInt64(gb, 0);
     }
@@ -32,10 +33,13 @@ public class Answer
     [Column("text")]
     [Required]
     public string Text { get; set; }
+    
+    [Column("closed")]
+    public bool Closed { get; set; }
 
     [Required]
     [Column("user")]
-    public User ByUser { get; set; }
+    public long ByUserId { get; set; }
 
     [Column("message_time")]
     [Required]

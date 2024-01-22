@@ -16,7 +16,6 @@ using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using TelegaSharpProject.Application.Bot.Settings;
 using TelegaSharpProject.Application.Bot.Settings.Interfaces;
 using TelegaSharpProject.Domain;
-using TelegaSharpProject.Domain.Info;
 using TelegaSharpProject.Domain.Interfaces;
 using TelegaSharpProject.Infrastructure.Data;
 using TelegaSharpProject.Infrastructure.Data.Interfaces;
@@ -32,8 +31,6 @@ internal static class Program
         
         var solverBot = container.Get<SolverBot>();
         await solverBot.Start();
-
-        await Task.Delay(-1);
     }
 
     private static StandardKernel ConfigureApplication()
@@ -43,8 +40,6 @@ internal static class Program
         ConfigureSettings(container);
         ConfigureInfrastructure(container);
         ConfigureBot(container);
-        
-        // Test(container);
             
         return container;
     }
@@ -136,27 +131,5 @@ internal static class Program
                 .Kernel
                 .Get<ISettingsManager>()
                 .Load());
-    }
-    
-    private static async void Test(IResolutionRoot container)
-    {
-        var test = container.Get<IDbWorker>();
-
-        // await test.TryRegisterUser(123123123L, "fdsajfdsaj");
-
-        // var user = await test.GetUserInfoAsync(new UserInfo(123L, "fsadfsa"));
-        //
-        // Console.WriteLine($"{user.Id},{user.RegisteredAt},   {user.UserName}");
-        //
-        // await test.CreateTaskAsync(123123123L, "Были жили 4 дедлайна...");
-        //
-        // var task = await test.GetUserTaskAsync(123123123L, 0);
-        //
-        // Console.WriteLine($"{task.Id},{task.Text},   {task.TopicCreator.UserName}");
-        //
-        // await test.CreateAnswerAsync(task.Id, 123123123L, "Ну ты и абобус");
-        //
-        // var comm = test.GetTaskAnswersAsync(task.Id).Result[0];
-        // Console.WriteLine($"{comm.Id},{comm.Text},   {comm.ByUser.UserName}");
     }
 }

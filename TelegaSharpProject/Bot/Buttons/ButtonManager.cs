@@ -21,7 +21,7 @@ public class ButtonManager: IButtonManager
     public async Task Execute(CallbackQuery ctx)
     {
         if (!_chatManager.TryGetChat(ctx.Message.Chat.Id, out var chat))
-            chat = _chatManager.GetChat(ctx.Message.Chat);
+            chat = _chatManager.GetChat(ctx.Message.Chat.Id);
         
         chat.SetToCommandState();
         
@@ -62,6 +62,10 @@ public class ButtonManager: IButtonManager
                         _buttonsDict["taskback"],
                         _buttonsDict["title"],
                         _buttonsDict["tasknext"],
+                    },
+                    new InlineKeyboardButton[]
+                    {
+                        _buttonsDict["answer"],
                     }
                 }
             );

@@ -22,9 +22,9 @@ public static class DomainEntitiesExtensions
 
     public static string ToMessage(this ITaskInfo task)
     {
-        var result = $"Создатель: {task.TopicCreator.UserName}\n" +
+        var result = $"Создатель: {task.Creator.UserName}\n" +
                      $"Количество очков за задачу: {task.Price}\n" +
-                     $"Описание: \n{task.Text}\n";
+                     $"Текст задачи: \n{task.Text}\n";
         
         if (!task.Done)
             return result + "Статус: Открыта";
@@ -32,5 +32,13 @@ public static class DomainEntitiesExtensions
         return result +
                $"Статус: Закрыта, {task.MentorEnd.Value.ToString(CultureInfo.InvariantCulture)}" +
                $"Ментор: {task.Mentor.UserName}";
+    }
+
+    public static string ToMessage(this IAnswerInfo answer)
+    {
+        return $"Ответ от: {answer.ByUser.UserName}\n" +
+               $"Время: {answer.MessageTime}\n" +
+               $"Ответ: \n{answer.Text}\n" +
+               "Статус: " + (answer.Closed ? "Закрыт" : "Открыт");
     }
 }

@@ -16,6 +16,6 @@ public class TaskNextButton : Button
     {
         MessageServiceFactory.Value.ShowLoadingAsync(ctx);
         
-        await MessageServiceFactory.Value.TaskAnotherPage(ctx.From, ctx.Message.Chat, 1);
+        await MessageServiceFactory.Value.TaskAnotherPageAsync(ctx.From, ctx.Message.Chat, 1);
     }
 }

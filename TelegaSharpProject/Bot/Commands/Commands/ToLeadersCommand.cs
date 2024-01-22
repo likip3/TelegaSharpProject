@@ -12,6 +12,6 @@ public class ToLeadersCommand : Command
     
     public override async Task Execute(Message message)
     {
-        await MessageServiceFactory.Value.LeaderBoard(message.Chat);
+        await MessageServiceFactory.Value.LeaderBoardAsync(message.Chat);
     }
 }

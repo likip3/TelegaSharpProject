@@ -5,13 +5,14 @@ namespace TelegaSharpProject.Domain.Info
 {
     public class AnswerInfo : IAnswerInfo
     {
-        public AnswerInfo(Answer c)
+        public AnswerInfo(Answer answer, User byUser)
         {
-            Id = c.Id;
-            TaskId = c.TaskId;
-            Text = c.Text;
-            ByUser = c.ByUser;
-            MessageTime = c.AnswerTime;
+            Id = answer.Id;
+            TaskId = answer.TaskId;
+            Text = answer.Text;
+            ByUser = new UserInfo(byUser);
+            Closed = answer.Closed;
+            MessageTime = answer.AnswerTime;
         }
 
         public long Id { get; }
@@ -20,7 +21,9 @@ namespace TelegaSharpProject.Domain.Info
 
         public string Text { get; }
 
-        public User ByUser { get; }
+        public IUserInfo ByUser { get; }
+        
+        public bool Closed { get; }
 
         public DateTime MessageTime { get; }
     }

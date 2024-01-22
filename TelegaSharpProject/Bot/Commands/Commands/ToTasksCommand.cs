@@ -13,6 +13,6 @@ public class ToTasksCommand : Command
 
     public override async Task Execute(Message message)
     {
-        await MessageServiceFactory.Value.TaskFirstPage(message.From, message.Chat);
+        await MessageServiceFactory.Value.TaskFirstPageAsync(message.From, message.Chat);
     }
 }

@@ -9,8 +9,10 @@ namespace TelegaSharpProject.Domain.Interfaces
         public long TaskId { get; }
 
         public string Text { get; }
+        
+        public bool Closed { get; }
 
-        public User ByUser { get; }
+        public IUserInfo ByUser { get; }
 
         public DateTime MessageTime { get; }
     }

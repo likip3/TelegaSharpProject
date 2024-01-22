@@ -22,7 +22,18 @@ namespace TelegaSharpProject.Domain
 
             return new UserInfo(
                 user, 
-                (await GetUserTasksAsync(userInfo.Id)).Count(task => task.Done));
+                (await GetUserAnswersAsync(user.Id, user))
+                .Count(a => a.Closed));
+        }
+        
+        public async Task<IUserInfo> GetUserInfoByIdAsync(long userId)
+        {
+            var user = await _db.Users.FindAsync(userId);
+
+            return new UserInfo(
+                user, 
+                (await GetUserAnswersAsync(user.Id, user))
+                .Count(a => a.Closed));
         }
 
         public async Task<IUserInfo[]> GetLeaderBoardAsync()
@@ -42,37 +53,35 @@ namespace TelegaSharpProject.Domain
             var result = await _db.Works.AddAsync(work);
             await _db.SaveChangesAsync();
 
-            return new TaskInfo(result.Entity);
+            return new TaskInfo(result.Entity, user);
         }
 
         private async Task<ITaskInfo> GetTaskInfo(Work work)
         {
-            var user = await _db.Users.FindAsync(work.TopicCreator);
+            var user = await _db.Users.FindAsync(work.CreatorId);
 
             return new TaskInfo(work, user);
         }
 
-        public async Task<ITaskInfo[]> GetTasksAsync(long userId)
+        public async Task<ITaskInfo> GetTaskByIdAsync(long taskId)
+        {
+            var task = await _db.Works.FindAsync(taskId);
+            var user = await _db.Users.FindAsync(task.CreatorId);
+
+            return new TaskInfo(task, user);
+        }
+
+        public async Task<ITaskInfo[]> GetTasksAsync(long userId, bool fromThisUser = false)
         {
             var works = await _db.Works
                 .OrderBy(w => w.TopicStart)
-                .Where(t => t.TopicCreator != userId)
+                .Where(t => (t.CreatorId != userId) == !fromThisUser)
                 .ToArrayAsync();
             
             return await Task.WhenAll(works.Select(GetTaskInfo));
         }
 
-        private async Task<ITaskInfo[]> GetUserTasksAsync(long userId)
-        {
-            var works = await _db.Works
-                .OrderBy(w => w.TopicStart)
-                .Where(t => t.TopicCreator == userId)
-                .ToArrayAsync();
-            
-            return await Task.WhenAll(works.Select(GetTaskInfo));
-        }
-
-        public async Task CloseTask(long taskId, long answerId)
+        public async Task CloseTaskAsync(long taskId, long answerId)
         {
             var task = await _db.Works.FindAsync(taskId);
             task?.Close(await GetAnswerAsync(answerId));
@@ -85,28 +94,47 @@ namespace TelegaSharpProject.Domain
             return await _db.Answers.FindAsync(answerId);
         }
 
-        public async Task CreateAnswerAsync(long taskId, long byUser, string text)
+        public async Task<IAnswerInfo> CreateAnswerAsync(long taskId, long byUser, string text)
         {
             var user = await _db.Users.FindAsync(byUser);
-            var comment = new Answer(taskId, user, text);
-            await _db.Answers.AddAsync(comment);
+            var comment = new Answer(taskId, user.Id, text);
+            var answer = await _db.Answers.AddAsync(comment);
             await _db.SaveChangesAsync();
+
+            return new AnswerInfo(answer.Entity, user);
         }
 
-        public async Task<AnswerInfo[]> GetTaskAnswersAsync(long taskId)
+        public async Task<IAnswerInfo[]> GetTaskAnswersAsync(long taskId)
         {
-            return await _db.Answers
-                .Where(c => c.TaskId == taskId)
-                .Select(c => new AnswerInfo(c))
+            var answers = await _db.Answers
+                .Where(answer => answer.TaskId == taskId)
                 .ToArrayAsync();
+            
+            return await Task.WhenAll(answers.Select(a => GetAnswerInfo(a)));
         }
 
-        public async Task<AnswerInfo[]> GetCommentsFromUser(long userId)
+        private async Task<IAnswerInfo> GetAnswerInfo(Answer answer, User? user = null)
         {
-            return await _db.Answers.Where(c => c.ByUser.Id == userId).Select(c => new AnswerInfo(c)).ToArrayAsync();
+            user ??= await _db.Users.FindAsync(answer.ByUserId);
+
+            return new AnswerInfo(answer, user);
+        }
+        
+        public async Task<IAnswerInfo[]> GetUserAnswersAsync(long userId, User? user = null)
+        {
+            user ??= await _db.Users.FindAsync(userId);
+            
+            var answers = await _db.Answers
+                .OrderBy(a => a.AnswerTime)
+                .Where(a => a.ByUserId == userId)
+                .ToArrayAsync();
+            
+            return await Task.WhenAll
+            (answers
+                .Select(a => GetAnswerInfo(a, user)));
         }
 
-        public async Task TryRegisterUser(IUserInfo userInfo)
+        public async Task TryRegisterUserAsync(IUserInfo userInfo)
         {
             if (await _db.Users.FindAsync(userInfo.Id) is not null)
                 return;

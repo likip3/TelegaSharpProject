@@ -36,7 +36,12 @@ namespace TelegaSharpProject.Infrastructure.Migrations
                         .HasColumnName("message_time");
 
                     b.Property<long>("ByUserId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("user");
+
+                    b.Property<bool>("Closed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("closed");
 
                     b.Property<long>("TaskId")
                         .HasColumnType("bigint")
@@ -49,9 +54,7 @@ namespace TelegaSharpProject.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ByUserId");
-
-                    b.ToTable("comments");
+                    b.ToTable("answers");
                 });
 
             modelBuilder.Entity("TelegaSharpProject.Infrastructure.Models.User", b =>
@@ -128,17 +131,6 @@ namespace TelegaSharpProject.Infrastructure.Migrations
                     b.HasIndex("AnswerId");
 
                     b.ToTable("works");
-                });
-
-            modelBuilder.Entity("TelegaSharpProject.Infrastructure.Models.Answer", b =>
-                {
-                    b.HasOne("TelegaSharpProject.Infrastructure.Models.User", "ByUser")
-                        .WithMany()
-                        .HasForeignKey("ByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ByUser");
                 });
 
             modelBuilder.Entity("TelegaSharpProject.Infrastructure.Models.Work", b =>

@@ -14,6 +14,6 @@ public class SendTaskButton : Button
     {
         MessageServiceFactory.Value.ShowLoadingAsync(ctx);
 
-        await MessageServiceFactory.Value.SendTask(ctx.Message.Chat);
+        await MessageServiceFactory.Value.SendTaskAsync(ctx.Message.Chat);
     }
 }
