@@ -74,7 +74,7 @@ namespace TelegaSharpProject.Domain
         public async Task<ITaskInfo[]> GetTasksAsync(long userId, bool fromThisUser = false)
         {
             var works = await _db.Works
-                .OrderBy(w => w.TopicStart)
+                .OrderByDescending(w => w.TopicStart)
                 .Where(t => (t.CreatorId != userId) == !fromThisUser)
                 .ToArrayAsync();
             
@@ -117,7 +117,7 @@ namespace TelegaSharpProject.Domain
         {
             user ??= await _db.Users.FindAsync(answer.ByUserId);
 
-            return new AnswerInfo(answer, user);
+            return new AnswerInfo(answer, user, await GetTaskByIdAsync(answer.TaskId));
         }
         
         public async Task<IAnswerInfo[]> GetUserAnswersAsync(long userId, User? user = null)

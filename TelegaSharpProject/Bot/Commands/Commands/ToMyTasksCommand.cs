@@ -1,7 +1,6 @@
 using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Attributes;
 using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Commands.Commands;
@@ -14,6 +13,6 @@ public class ToMyTasksCommand : Command
     
     public override async Task Execute(Message message)
     {
-        // await MessageServiceFactory.Value.TaskFirstPageAsync(message.Chat);
+        await MessageServiceFactory.Value.TaskFirstPageAsync(message.From, message.Chat);
     }
 }

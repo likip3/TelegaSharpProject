@@ -34,11 +34,17 @@ public static class DomainEntitiesExtensions
                $"Ментор: {task.Mentor.UserName}";
     }
 
-    public static string ToMessage(this IAnswerInfo answer)
+    public static string ToMessage(this IAnswerInfo answer, bool withTask = false)
     {
-        return $"Ответ от: {answer.ByUser.UserName}\n" +
-               $"Время: {answer.MessageTime}\n" +
-               $"Ответ: \n{answer.Text}\n" +
-               "Статус: " + (answer.Closed ? "Закрыт" : "Открыт");
+        var result = $"Ответ от: {answer.ByUser.UserName}\n" +
+                     $"Время: {answer.MessageTime}\n" +
+                     $"Ответ: \n{answer.Text}\n" +
+                     "Статус: " + (answer.Closed ? "Закрыт" : "Открыт");
+
+        if (!withTask)
+            return result;
+
+        return $"Задача:\n{answer.TaskInfo.ToMessage()}\n\n" +
+               $"Ответ:\n" + result;
     }
 }

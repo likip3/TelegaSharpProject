@@ -72,6 +72,10 @@ public class ButtonManager: IButtonManager
                     _buttonsDict["taskback"],
                     _buttonsDict["title"],
                     _buttonsDict["tasknext"],
+                },
+                new InlineKeyboardButton[]
+                {
+                    _buttonsDict["answers"]
                 }
             }
         );
@@ -101,10 +105,6 @@ public class ButtonManager: IButtonManager
                     _buttonsDict["taskback"],
                     _buttonsDict["title"],
                     _buttonsDict["tasknext"],
-                },
-                new InlineKeyboardButton[]
-                {
-                    new InlineKeyboardButton("fdsafkdjklaf")
                 }
             }
         );

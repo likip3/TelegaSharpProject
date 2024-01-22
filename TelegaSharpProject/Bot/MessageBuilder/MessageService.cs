@@ -76,21 +76,6 @@ public class MessageService : IMessageService
 
         return (task, markup);
     }
-    
-    private async Task<(IAnswerInfo, InlineKeyboardMarkup)> GetAnswerAsync(
-        ISolverChat solverChat,
-        User user,
-        bool fromThisUser = false)
-    {
-        var answers = fromThisUser 
-            ? await Worker.GetUserAnswersAsync(user.Id)
-            : await Worker.GetTaskAnswersAsync(solverChat.TaskChatInfo.LastTask.Id);
-        
-        var answer = answers[solverChat.AnswerChatInfo.Page];
-        var markup = ButtonManager.GetAnswerMarkup(!fromThisUser && !answer.Closed);
-
-        return (answer, markup);
-    }
 
     public async Task TaskFirstPageAsync(User user, Chat chat)
     {
@@ -200,11 +185,26 @@ public class MessageService : IMessageService
             "Введите текст ответа",
             new InlineKeyboardMarkup(Enumerable.Empty<InlineKeyboardButton>()));
     }
+    
+    private async Task<(IAnswerInfo, InlineKeyboardMarkup)> GetAnswerAsync(
+        ISolverChat solverChat,
+        User user,
+        bool fromThisUser = false)
+    {
+        var answers = fromThisUser 
+            ? await Worker.GetUserAnswersAsync(user.Id)
+            : await Worker.GetTaskAnswersAsync(solverChat.TaskChatInfo.LastTask.Id);
+        
+        var answer = answers[solverChat.AnswerChatInfo.Page];
+        var markup = ButtonManager.GetAnswerMarkup(!fromThisUser && !answer.Closed);
+
+        return (answer, markup);
+    }
 
     public async Task AnswerFirstPageAsync(User user, Chat chat)
     {
         var solverChat = ChatManager.GetChat(chat.Id);
-        solverChat.TaskChatInfo.Reset();
+        solverChat.AnswerChatInfo.Reset();
 
         var fromThisUser = solverChat.AnswerChatInfo.From == From.Me;
 
@@ -216,12 +216,12 @@ public class MessageService : IMessageService
             (var answerInfo, markup) = await GetAnswerAsync(solverChat, user, fromThisUser);
             solverChat.AnswerChatInfo.SetAnswer(answerInfo);
             
-            message = answerInfo.ToMessage();
+            message = answerInfo.ToMessage(fromThisUser);
         }
         catch (IndexOutOfRangeException)
         {
             message =
-                solverChat.TaskChatInfo.From == From.Me 
+                fromThisUser 
                     ? "Вы еще не написали ни одного ответа" 
                     : "На данный момент нет ответов на эту задачу";
             
@@ -243,7 +243,7 @@ public class MessageService : IMessageService
             var (answerInfo, markup) = await GetAnswerAsync(solverChat, user, fromThisUser);
             solverChat.AnswerChatInfo.SetAnswer(answerInfo);
             
-            var message = answerInfo.ToMessage();
+            var message = answerInfo.ToMessage(fromThisUser);
 
             await SendMessageAsync(chat.Id, message, markup);
         }

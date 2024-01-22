@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 
-[SolverButton("Отправить задачу", "sendtask")]
+[SolverButton("Создать задачу", "sendtask")]
 public class SendTaskButton : Button
 {
     public SendTaskButton(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }

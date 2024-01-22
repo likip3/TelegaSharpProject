@@ -98,8 +98,13 @@ namespace TelegaSharpProject.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("AnswerId")
-                        .HasColumnType("bigint");
+                    b.Property<long>("Answer")
+                        .HasColumnType("bigint")
+                        .HasColumnName("answer");
+
+                    b.Property<long>("CreatorId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("topic_creator");
 
                     b.Property<bool>("Done")
                         .HasColumnType("boolean")
@@ -118,28 +123,13 @@ namespace TelegaSharpProject.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("task");
 
-                    b.Property<long>("TopicCreator")
-                        .HasColumnType("bigint")
-                        .HasColumnName("topic_creator");
-
                     b.Property<DateTime>("TopicStart")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("topic_start");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnswerId");
-
                     b.ToTable("works");
-                });
-
-            modelBuilder.Entity("TelegaSharpProject.Infrastructure.Models.Work", b =>
-                {
-                    b.HasOne("TelegaSharpProject.Infrastructure.Models.Answer", "Answer")
-                        .WithMany()
-                        .HasForeignKey("AnswerId");
-
-                    b.Navigation("Answer");
                 });
 #pragma warning restore 612, 618
         }

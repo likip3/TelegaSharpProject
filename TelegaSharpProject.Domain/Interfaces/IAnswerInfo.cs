@@ -15,5 +15,7 @@ namespace TelegaSharpProject.Domain.Interfaces
         public IUserInfo ByUser { get; }
 
         public DateTime MessageTime { get; }
+        
+        public ITaskInfo? TaskInfo { get; }
     }
 }

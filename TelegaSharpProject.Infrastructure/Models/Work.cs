@@ -25,7 +25,7 @@ public class Work
     {
         MentorEnd = DateTime.Now;
         Done = true;
-        Answer = answer;
+        Answer = answer.Id;
     }
 
     [Key]
@@ -49,7 +49,7 @@ public class Work
     public DateTime? MentorEnd { get; set; }
     
     [Column("answer")]
-    public Answer? Answer { get; set; }
+    public long Answer { get; set; }
     
     [Required]
     [Column("price")]

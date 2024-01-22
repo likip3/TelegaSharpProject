@@ -14,6 +14,12 @@ namespace TelegaSharpProject.Domain.Info
             Closed = answer.Closed;
             MessageTime = answer.AnswerTime;
         }
+        
+        public AnswerInfo(Answer answer, User byUser, ITaskInfo taskInfo)
+        : this(answer, byUser)
+        {
+            TaskInfo = taskInfo;
+        }
 
         public long Id { get; }
 
@@ -26,5 +32,6 @@ namespace TelegaSharpProject.Domain.Info
         public bool Closed { get; }
 
         public DateTime MessageTime { get; }
+        public ITaskInfo? TaskInfo { get; }
     }
 }
