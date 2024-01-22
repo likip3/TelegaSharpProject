@@ -1,7 +1,6 @@
 using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Attributes;
 using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Commands.Commands;
@@ -9,20 +8,10 @@ namespace TelegaSharpProject.Application.Bot.Commands.Commands;
 [SolverCommand("input", false)]
 public class InputCommand : Command
 {
-    private readonly Lazy<ITelegramBotClient> _botFactory;
+    public InputCommand(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }
     
-    public InputCommand(
-        Lazy<ITelegramBotClient> botFactory,
-        IMessageBuilder messageBuilder) : base(messageBuilder)
+    public override async Task Execute(Message message)
     {
-        _botFactory = botFactory;
-    }
-    
-    public override async void Execute(Message message)
-    {
-        await _botFactory.Value.SendTextMessageAsync(
-            message.Chat.Id,
-            "Записал!"
-        );
+        await MessageServiceFactory.Value.CreateEntity(message);
     }
 }

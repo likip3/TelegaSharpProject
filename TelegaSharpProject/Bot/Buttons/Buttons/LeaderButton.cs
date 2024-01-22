@@ -2,25 +2,18 @@
 using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using Telegram.Bot.Types;
-using Telegram.Bot;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 
 [SolverButton("Таблица лидеров","leaders")]
 public class LeaderButton : Button
 {
-    public LeaderButton(
-        Lazy<ITelegramBotClient> botClient,
-        IMessageBuilder messageBuilder) : base(botClient, messageBuilder)
-    { }
+    public LeaderButton(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }
         
-    internal override async Task Execute(CallbackQuery ctx)
+    internal override async Task ExecuteAsync(CallbackQuery ctx)
     {
-        ShowLoading(ctx);
-        
-        await BotClient.Value.SendTextMessageAsync(
-            ctx.Message.Chat.Id,
-            await Builder.GetLeaderBoard()
-        );
+        MessageServiceFactory.Value.ShowLoadingAsync(ctx);
+
+        await MessageServiceFactory.Value.LeaderBoard(ctx.Message.Chat);
     }
 }

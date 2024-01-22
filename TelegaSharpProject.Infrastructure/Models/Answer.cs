@@ -4,22 +4,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace TelegaSharpProject.Infrastructure.Models;
 
 [Table("comments")]
-public class Comment
+public class Answer
 {
-    public Comment()
+    public Answer()
     {
     }
 
-    public Comment(long taskId, User? byUser, string? text)
+    public Answer(long taskId, User? byUser, string? text)
     {
-        TaskID = taskId;
+        TaskId = taskId;
         Text = text;
         ByUser = byUser;
-        MessageTime = DateTime.Now;
+        AnswerTime = DateTime.Now;
         var gb = Guid.NewGuid().ToByteArray();
         Id = BitConverter.ToInt64(gb, 0);
     }
-
 
     [Key]
     [Column("id")]
@@ -28,17 +27,17 @@ public class Comment
 
     [Column("task_id")]
     [Required]
-    public long TaskID { get; set; }
+    public long TaskId { get; set; }
 
     [Column("text")]
     [Required]
-    public string? Text { get; set; }
+    public string Text { get; set; }
 
     [Required]
     [Column("user")]
-    public User? ByUser { get; set; }
+    public User ByUser { get; set; }
 
     [Column("message_time")]
     [Required]
-    public DateTime MessageTime { get; set; }
+    public DateTime AnswerTime { get; set; }
 }

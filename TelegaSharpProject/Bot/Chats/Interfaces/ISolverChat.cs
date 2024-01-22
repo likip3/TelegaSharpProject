@@ -6,10 +6,13 @@ namespace TelegaSharpProject.Application.Bot.Chats.Interfaces;
 public interface ISolverChat
 {
     public ChatState ChatState { get; }
+    public InputType InputType { get; }
     public Chat Chat { get; }
-    public Task ToTitle();
+    public void Reset();
     public bool TrySetPage(int page);
-    public void SetToInputState();
+    public void SetToInputState(InputType inputType);
     public void SetToCommandState();
     public int PageNum { get; }
+    public ITaskChatInfo TaskChatInfo { get; }
+    
 }

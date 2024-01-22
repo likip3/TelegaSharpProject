@@ -8,11 +8,11 @@ public abstract class Command
 {
     public SolverCommand SolverCommand { get; }
     
-    protected IMessageBuilder MessageBuilder { get; }
+    protected Lazy<IMessageService> MessageServiceFactory { get; }
 
-    public Command(IMessageBuilder messageBuilder)
+    public Command(Lazy<IMessageService> messageServiceFactory)
     {
-        MessageBuilder = messageBuilder;
+        MessageServiceFactory = messageServiceFactory;
         var attributes = GetType().GetCustomAttributes(typeof(SolverCommand), true);
         if (attributes.Length > 0)
         {
@@ -25,5 +25,5 @@ public abstract class Command
         }
     }
 
-    public abstract void Execute(Message message);
+    public abstract Task Execute(Message message);
 }

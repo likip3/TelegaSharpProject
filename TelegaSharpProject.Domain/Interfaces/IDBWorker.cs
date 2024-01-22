@@ -1,32 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TelegaSharpProject.Domain.Info;
+﻿using TelegaSharpProject.Domain.Info;
+using TelegaSharpProject.Infrastructure.Models;
 
 namespace TelegaSharpProject.Domain.Interfaces
 {
-    public interface IDBWorker : IDisposable
+    public interface IDbWorker : IDisposable
     {
         public Task<IUserInfo> GetUserInfoAsync(IUserInfo userInfo);
 
         public Task<IUserInfo[]> GetLeaderBoardAsync();
 
-        public Task<ITaskInfo> GetTaskAsync(int page);
+        public Task<ITaskInfo[]> GetTasksAsync(long userId);
 
-        public Task CloseTask(long taskID);
+        public Task CloseTask(long taskId, long answerId);
 
-        public Task CommentTask(long taskID, long byUser, string text);
+        public Task CreateAnswerAsync(long taskId, long byUser, string text);
 
-        public Task<CommentInfo[]> GetCommentsToTask(long taskID);
+        public Task<AnswerInfo[]> GetTaskAnswersAsync(long taskId);
 
-        public  Task<CommentInfo[]> GetCommentsFromUser(long userID);
+        public  Task<AnswerInfo[]> GetCommentsFromUser(long userId);
 
-        public Task CreateTaskAsync(long byUserID, string task);
+        public Task<ITaskInfo> CreateTaskAsync(long byUserId, string task);
 
         public Task TryRegisterUser(IUserInfo userInfo);
 
-        public Task<TaskInfo> GetUserTaskAsync(long userID, int page);
+        public Task<TaskInfo> GetUserTaskAsync(long userId, int page);
     }
 }

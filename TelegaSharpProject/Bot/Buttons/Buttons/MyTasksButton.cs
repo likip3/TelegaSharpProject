@@ -1,7 +1,6 @@
 ﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
 using TelegaSharpProject.Application.Bot.Buttons.Attributes;
 using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
@@ -9,16 +8,10 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 [SolverButton("Мои задачи", "mytasks")]
 public class MyTasksButton : Button
 {
-    public MyTasksButton(
-        Lazy<ITelegramBotClient> botClient,
-        IMessageBuilder messageBuilder) : base(botClient, messageBuilder) { }
+    public MyTasksButton(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }
 
-    internal override async Task Execute(CallbackQuery ctx)
+    internal override async Task ExecuteAsync(CallbackQuery ctx)
     {
-        await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id);
-        await BotClient.Value.SendTextMessageAsync(
-            ctx.Message.Chat,
-            MessageBuilder1.GetMyTasks(ctx.From)
-        );
+        MessageServiceFactory.Value.ShowLoadingAsync(ctx);
     }
 }

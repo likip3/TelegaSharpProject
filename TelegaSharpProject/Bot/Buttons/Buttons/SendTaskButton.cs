@@ -1,8 +1,6 @@
 ﻿using TelegaSharpProject.Application.Bot.Buttons.Abstracts;
 using TelegaSharpProject.Application.Bot.Buttons.Attributes;
-using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
@@ -10,26 +8,12 @@ namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 [SolverButton("Отправить задачу", "sendtask")]
 public class SendTaskButton : Button
 {
-    private readonly Lazy<IChatManager> _chatManagerFactory;
-    public SendTaskButton(
-        Lazy<ITelegramBotClient> botClient,
-        IMessageBuilder messageBuilder,
-        Lazy<IChatManager> chatManagerFactory) : base(botClient, messageBuilder)
-    {
-        _chatManagerFactory = chatManagerFactory;
-    }
+    public SendTaskButton(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }
     
-    internal override async Task Execute(CallbackQuery ctx)
+    internal override async Task ExecuteAsync(CallbackQuery ctx)
     {
-        if (!_chatManagerFactory.Value.TryGetChat(ctx.Message.Chat.Id, out var chat))
-            return;
-        
-        chat.SetToInputState();
-        
-        await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id);
-        await BotClient.Value.SendTextMessageAsync(
-            ctx.Message.Chat.Id,
-            MessageBuilder1.SendTask()
-        );
+        MessageServiceFactory.Value.ShowLoadingAsync(ctx);
+
+        await MessageServiceFactory.Value.SendTask(ctx.Message.Chat);
     }
 }

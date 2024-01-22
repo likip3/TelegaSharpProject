@@ -1,47 +1,37 @@
 ﻿using TelegaSharpProject.Application.Bot.Buttons.Attributes;
+using TelegaSharpProject.Application.Bot.Chats.Interfaces;
 using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace TelegaSharpProject.Application.Bot.Buttons.Abstracts
+namespace TelegaSharpProject.Application.Bot.Buttons.Abstracts;
+
+public abstract class Button
 {
-    public abstract class Button
+    public SolverButton SolverButton { get; }
+    protected Lazy<IMessageService> MessageServiceFactory { get; }
+
+    internal abstract Task ExecuteAsync(CallbackQuery ctx);
+
+    internal Button(Lazy<IMessageService> messageServiceFactory)
     {
-        public SolverButton SolverButton { get; }
-        
-        protected readonly Lazy<ITelegramBotClient> BotClient;
-        protected IMessageBuilder Builder { get; }
+        MessageServiceFactory = messageServiceFactory;
 
-        internal abstract Task Execute(CallbackQuery ctx);
-
-        internal Button(
-            Lazy<ITelegramBotClient> botClient,
-            IMessageBuilder messageBuilder)
+        var attributes = GetType().GetCustomAttributes(typeof(SolverButton), true);
+        if (attributes.Length > 0)
         {
-            BotClient = botClient;
-            Builder = messageBuilder;
-
-            var attributes = GetType().GetCustomAttributes(typeof(SolverButton), true);
-            if (attributes.Length > 0)
-            {
-                var solverButton = attributes[0] as SolverButton;
-                SolverButton = solverButton;
-            }
-            else
-            {
-                throw new Exception("No Attribute");
-            }
+            var solverButton = attributes[0] as SolverButton;
+            SolverButton = solverButton;
         }
-
-        public static implicit operator InlineKeyboardButton(Button button)
+        else
         {
-            return InlineKeyboardButton.WithCallbackData(button.SolverButton.Text, button.SolverButton.Data);
+            throw new Exception("No Attribute");
         }
+    }
 
-        protected async void ShowLoading(CallbackQuery ctx)
-        {
-            await BotClient.Value.AnswerCallbackQueryAsync(ctx.Id, "Загружаем данные...");
-        }
+    public static implicit operator InlineKeyboardButton(Button button)
+    {
+        return InlineKeyboardButton.WithCallbackData(button.SolverButton.Text, button.SolverButton.Data);
     }
 }

@@ -1,7 +1,6 @@
 using TelegaSharpProject.Application.Bot.Commands.Abstracts;
 using TelegaSharpProject.Application.Bot.Commands.Attributes;
 using TelegaSharpProject.Application.Bot.MessageBuilder.Interfaces;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Commands.Commands;
@@ -9,19 +8,10 @@ namespace TelegaSharpProject.Application.Bot.Commands.Commands;
 [SolverCommand("/leaders")]
 public class ToLeadersCommand : Command
 {
-    private readonly Lazy<ITelegramBotClient> _botClientFactory;
+    public ToLeadersCommand(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }
     
-    public ToLeadersCommand(
-        Lazy<ITelegramBotClient> botClientFactory,
-        IMessageBuilder messageBuilder) : base(messageBuilder)
+    public override async Task Execute(Message message)
     {
-        _botClientFactory = botClientFactory;
-    }
-    
-    public override async void Execute(Message message)
-    {
-        await _botClientFactory.Value.SendTextMessageAsync(
-            message.Chat.Id,
-            await MessageBuilder.GetLeaderBoard());
+        await MessageServiceFactory.Value.LeaderBoard(message.Chat);
     }
 }

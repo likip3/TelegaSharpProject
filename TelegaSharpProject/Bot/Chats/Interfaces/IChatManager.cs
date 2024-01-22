@@ -6,5 +6,5 @@ namespace TelegaSharpProject.Application.Bot.Chats.Interfaces;
 public interface IChatManager
 {
     public bool TryGetChat(long chatId, out ISolverChat chat);
-    public Task<ISolverChat> StartChat(Chat chat, User user);
+    public ISolverChat GetChat(Chat chat);
 }

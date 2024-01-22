@@ -21,10 +21,11 @@ public class Work
         Price = 5;
     }
 
-    public void Close()
+    public void Close(Answer answer)
     {
         MentorEnd = DateTime.Now;
         Done = true;
+        Answer = answer;
     }
 
     [Key]
@@ -34,7 +35,7 @@ public class Work
     
     [Required]
     [Column("topic_creator")]
-    public User? TopicCreator { get; set; }
+    public User TopicCreator { get; set; }
 
     [Required]
     [Column("task")]
@@ -46,6 +47,9 @@ public class Work
     
     [Column("mentor_end")]
     public DateTime? MentorEnd { get; set; }
+    
+    [Column("answer")]
+    public Answer? Answer { get; set; }
     
     [Required]
     [Column("price")]

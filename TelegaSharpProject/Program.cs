@@ -93,8 +93,8 @@ internal static class Program
             .InSingletonScope();
 
         container
-            .Bind<IMessageBuilder>()
-            .To<MessageBuilder>()
+            .Bind<IMessageService>()
+            .To<MessageService>()
             .InSingletonScope();
     }
 
@@ -106,8 +106,8 @@ internal static class Program
             .InSingletonScope();
 
         container
-            .Bind<IDBWorker>()
-            .To<DBWorker>()
+            .Bind<IDbWorker>()
+            .To<DbWorker>()
             .InSingletonScope();
 
         container
@@ -140,7 +140,7 @@ internal static class Program
     
     private static async void Test(IResolutionRoot container)
     {
-        var test = container.Get<IDBWorker>();
+        var test = container.Get<IDbWorker>();
 
         // await test.TryRegisterUser(123123123L, "fdsajfdsaj");
 
@@ -154,9 +154,9 @@ internal static class Program
         //
         // Console.WriteLine($"{task.Id},{task.Text},   {task.TopicCreator.UserName}");
         //
-        // await test.CommentTask(task.Id, 123123123L, "Ну ты и абобус");
+        // await test.CreateAnswerAsync(task.Id, 123123123L, "Ну ты и абобус");
         //
-        // var comm = test.GetCommentsToTask(task.Id).Result[0];
+        // var comm = test.GetTaskAnswersAsync(task.Id).Result[0];
         // Console.WriteLine($"{comm.Id},{comm.Text},   {comm.ByUser.UserName}");
     }
 }

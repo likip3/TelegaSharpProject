@@ -1,39 +1,29 @@
-using TelegaSharpProject.Application.Bot.Buttons.Interfaces;
 using TelegaSharpProject.Application.Bot.Chats.Enums;
+using TelegaSharpProject.Application.Bot.Chats.Infos;
 using TelegaSharpProject.Application.Bot.Chats.Interfaces;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Chats;
 
 public class SolverChat : ISolverChat
 {
-    private readonly IButtonManager _buttonManager;
-    private readonly ITelegramBotClient _botClient;
-
-    public SolverChat(Chat chat, IButtonManager buttonManager, ITelegramBotClient botClient)
+    public SolverChat(Chat chat)
     {
-        _buttonManager = buttonManager;
-        _botClient = botClient;
         ChatState = ChatState.WaitForCommand;
         Chat = chat;
         PageNum = 1;
+        TaskChatInfo = new TaskChatInfo();
     } 
     
     public ChatState ChatState { get; private set; }
+    public InputType InputType { get; private set; }
     public Chat Chat { get; }
     public int PageNum { get; private set; }
-    
-    public async Task ToTitle()
-    {
-        var markUp = _buttonManager.GetTitleButtons();
-        
-        await _botClient.SendTextMessageAsync(
-            Chat.Id,
-            "Что вы хотите?",
-            replyMarkup: markUp
-        );
+    public ITaskChatInfo TaskChatInfo { get; }
 
+    public void Reset()
+    {
+        TaskChatInfo.Reset();
         ChatState = ChatState.WaitForCommand;
     }
 
@@ -45,9 +35,10 @@ public class SolverChat : ISolverChat
         return true;
     }
 
-    public void SetToInputState()
+    public void SetToInputState(InputType inputType)
     {
         ChatState = ChatState.WaitForInput;
+        InputType = inputType;
     }
 
     public void SetToCommandState()

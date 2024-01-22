@@ -21,12 +21,12 @@ public class ButtonManager: IButtonManager
     public async Task Execute(CallbackQuery ctx)
     {
         if (!_chatManager.TryGetChat(ctx.Message.Chat.Id, out var chat))
-            chat = await _chatManager.StartChat(ctx.Message.Chat, ctx.Message.From);
+            chat = _chatManager.GetChat(ctx.Message.Chat);
         
         chat.SetToCommandState();
         
         if (ctx.Data != null && _buttonsDict.TryGetValue(ctx.Data.ToLower(), out var button))
-            await button.Execute(ctx);
+            await button.ExecuteAsync(ctx);
     }
 
     public InlineKeyboardMarkup GetTitleButtons()
@@ -53,6 +53,19 @@ public class ButtonManager: IButtonManager
 
     public InlineKeyboardMarkup GetTaskMarkup(bool myTasks = false)
     {
+        if (!myTasks)
+            return new InlineKeyboardMarkup(
+                new List<InlineKeyboardButton[]>
+                {
+                    new InlineKeyboardButton[]
+                    {
+                        _buttonsDict["taskback"],
+                        _buttonsDict["title"],
+                        _buttonsDict["tasknext"],
+                    }
+                }
+            );
+        
         //todo решить
         return new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>
