@@ -22,6 +22,7 @@ public class MyTasksButton : Button
         
         var chat = _chatManager.GetChat(ctx.Message.Chat.Id);
         chat.TaskChatInfo.SetFrom(From.Me);
+        chat.SetToTaskState();
 
         await MessageServiceFactory.Value.TaskFirstPageAsync(ctx.From, ctx.Message.Chat);
     }

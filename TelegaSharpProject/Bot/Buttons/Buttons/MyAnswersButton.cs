@@ -25,6 +25,7 @@ public class MyAnswersButton : Button
 
         var chat = _chatManager.GetChat(ctx.Message.Chat.Id);
         chat.AnswerChatInfo.SetFrom(From.Me);
+        chat.SetToAnswerState();
 
         await MessageServiceFactory.Value.AnswerFirstPageAsync(ctx.From, ctx.Message.Chat);
     }

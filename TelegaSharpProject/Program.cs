@@ -31,6 +31,8 @@ internal static class Program
         
         var solverBot = container.Get<SolverBot>();
         await solverBot.Start();
+        
+        await Task.Delay(-1);
     }
 
     private static StandardKernel ConfigureApplication()

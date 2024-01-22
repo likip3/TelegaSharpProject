@@ -9,7 +9,8 @@ public interface ISolverChat
     public long ChatId { get; }
     public void Reset();
     public void SetToInputState(InputType inputType);
-    public void SetToCommandState();
+    public void SetToTaskState();
+    public void SetToAnswerState();
     public int PageNum { get; }
     public ITaskChatInfo TaskChatInfo { get; }
     public IAnswerChatInfo AnswerChatInfo { get; }

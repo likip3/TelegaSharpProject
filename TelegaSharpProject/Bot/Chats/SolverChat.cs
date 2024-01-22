@@ -8,7 +8,7 @@ public class SolverChat : ISolverChat
 {
     public SolverChat(long chatId)
     {
-        ChatState = ChatState.WaitForCommand;
+        ChatState = ChatState.None;
         ChatId = chatId;
         PageNum = 1;
         TaskChatInfo = new TaskChatInfo();
@@ -26,7 +26,7 @@ public class SolverChat : ISolverChat
     {
         TaskChatInfo.Reset();
         AnswerChatInfo.Reset();
-        ChatState = ChatState.WaitForCommand;
+        ChatState = ChatState.None;
     }
 
     public bool TrySetPage(int page)
@@ -43,8 +43,18 @@ public class SolverChat : ISolverChat
         InputType = inputType;
     }
 
+    public void SetToTaskState()
+    {
+        ChatState = ChatState.TaskState;
+    }
+
     public void SetToCommandState()
     {
-        ChatState = ChatState.WaitForCommand;
+        ChatState = ChatState.None;
+    }
+    
+    public void SetToAnswerState()
+    {
+        ChatState = ChatState.AnswerState;
     }
 }

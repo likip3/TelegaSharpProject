@@ -72,7 +72,7 @@ public class MessageService : IMessageService
         var tasks = await Worker.GetTasksAsync(user.Id, fromThisUser);
         
         var task = tasks[solverChat.TaskChatInfo.Page];
-        var markup = ButtonManager.GetTaskMarkup();
+        var markup = ButtonManager.GetTaskMarkup(fromThisUser);
 
         return (task, markup);
     }
@@ -82,7 +82,9 @@ public class MessageService : IMessageService
         User user,
         bool fromThisUser = false)
     {
-        var answers = await Worker.GetTaskAnswersAsync(solverChat.TaskChatInfo.LastTask.Id);
+        var answers = fromThisUser 
+            ? await Worker.GetUserAnswersAsync(user.Id)
+            : await Worker.GetTaskAnswersAsync(solverChat.TaskChatInfo.LastTask.Id);
         
         var answer = answers[solverChat.AnswerChatInfo.Page];
         var markup = ButtonManager.GetAnswerMarkup(!fromThisUser && !answer.Closed);
@@ -247,7 +249,7 @@ public class MessageService : IMessageService
         }
         catch (IndexOutOfRangeException)
         {
-            await TaskFirstPageAsync(user, chat);
+            await AnswerFirstPageAsync(user, chat);
         }
     }
 
