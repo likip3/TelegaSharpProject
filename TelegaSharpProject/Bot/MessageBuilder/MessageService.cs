@@ -76,13 +76,26 @@ public class MessageService : IMessageService
 
         return (task, markup);
     }
+    
+    private async Task<(IAnswerInfo, InlineKeyboardMarkup)> GetAnswerAsync(
+        ISolverChat solverChat,
+        User user,
+        bool fromThisUser = false)
+    {
+        var answers = await Worker.GetTaskAnswersAsync(solverChat.TaskChatInfo.LastTask.Id);
+        
+        var answer = answers[solverChat.AnswerChatInfo.Page];
+        var markup = ButtonManager.GetAnswerMarkup(!fromThisUser && !answer.Closed);
+
+        return (answer, markup);
+    }
 
     public async Task TaskFirstPageAsync(User user, Chat chat)
     {
         var solverChat = ChatManager.GetChat(chat.Id);
         solverChat.TaskChatInfo.Reset();
 
-        var fromThisUser = solverChat.TaskChatInfo.TaskFrom == TaskFrom.Me;
+        var fromThisUser = solverChat.TaskChatInfo.From == From.Me;
 
         string message;
         InlineKeyboardMarkup markup;
@@ -97,7 +110,7 @@ public class MessageService : IMessageService
         catch (IndexOutOfRangeException)
         {
             message =
-                solverChat.TaskChatInfo.TaskFrom == TaskFrom.Me 
+                solverChat.TaskChatInfo.From == From.Me 
                     ? "Вы еще не выложили ни одной задачи" 
                     : "На данный момент нет нерешенных задач";
             
@@ -107,12 +120,12 @@ public class MessageService : IMessageService
         await SendMessageAsync(chat.Id, message, markup);
     }
 
-    public async Task TaskAnotherPageAsync(User user, Chat chat, int delta)
+    public async Task AnotherPageTaskAsync(User user, Chat chat, int delta)
     {
         var solverChat = ChatManager.GetChat(chat.Id);
         solverChat.TaskChatInfo.TrySetDeltaPage(delta);
         
-        var fromThisUser = solverChat.TaskChatInfo.TaskFrom == TaskFrom.Me;
+        var fromThisUser = solverChat.TaskChatInfo.From == From.Me;
 
         try
         {
@@ -184,6 +197,58 @@ public class MessageService : IMessageService
             chat.Id, 
             "Введите текст ответа",
             new InlineKeyboardMarkup(Enumerable.Empty<InlineKeyboardButton>()));
+    }
+
+    public async Task AnswerFirstPageAsync(User user, Chat chat)
+    {
+        var solverChat = ChatManager.GetChat(chat.Id);
+        solverChat.TaskChatInfo.Reset();
+
+        var fromThisUser = solverChat.AnswerChatInfo.From == From.Me;
+
+        string message;
+        InlineKeyboardMarkup markup;
+
+        try
+        {
+            (var answerInfo, markup) = await GetAnswerAsync(solverChat, user, fromThisUser);
+            solverChat.AnswerChatInfo.SetAnswer(answerInfo);
+            
+            message = answerInfo.ToMessage();
+        }
+        catch (IndexOutOfRangeException)
+        {
+            message =
+                solverChat.TaskChatInfo.From == From.Me 
+                    ? "Вы еще не написали ни одного ответа" 
+                    : "На данный момент нет ответов на эту задачу";
+            
+            markup = ButtonManager.GetTitleButtons();
+        }
+        
+        await SendMessageAsync(chat.Id, message, markup);
+    }
+
+    public async Task AnotherPageAnswerAsync(User user, Chat chat, int delta)
+    {
+        var solverChat = ChatManager.GetChat(chat.Id);
+        solverChat.AnswerChatInfo.TrySetDeltaPage(delta);
+        
+        var fromThisUser = solverChat.AnswerChatInfo.From == From.Me;
+
+        try
+        {
+            var (answerInfo, markup) = await GetAnswerAsync(solverChat, user, fromThisUser);
+            solverChat.AnswerChatInfo.SetAnswer(answerInfo);
+            
+            var message = answerInfo.ToMessage();
+
+            await SendMessageAsync(chat.Id, message, markup);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            await TaskFirstPageAsync(user, chat);
+        }
     }
 
     private async Task SendMessageAsync(long chatId, string message, IReplyMarkup? markup = null)

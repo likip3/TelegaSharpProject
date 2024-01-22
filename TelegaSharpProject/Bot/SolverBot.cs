@@ -1,6 +1,5 @@
 ﻿using TelegaSharpProject.Application.Bot.Buttons.Interfaces;
 using TelegaSharpProject.Application.Bot.Commands.Interfaces;
-using TelegaSharpProject.Application.Bot.Settings;
 using TelegaSharpProject.Application.Bot.Settings.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;

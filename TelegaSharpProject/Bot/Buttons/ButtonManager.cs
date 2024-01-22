@@ -43,6 +43,7 @@ public class ButtonManager: IButtonManager
                 {
                     _buttonsDict["viewtasks"],
                     _buttonsDict["mytasks"],
+                    _buttonsDict["myanswers"],
                 },
                 new InlineKeyboardButton[]
                 {
@@ -51,9 +52,9 @@ public class ButtonManager: IButtonManager
             });
     }
 
-    public InlineKeyboardMarkup GetTaskMarkup(bool myTasks = false)
+    public InlineKeyboardMarkup GetTaskMarkup(bool myTask = false)
     {
-        if (!myTasks)
+        if (!myTask)
             return new InlineKeyboardMarkup(
                 new List<InlineKeyboardButton[]>
                 {
@@ -70,7 +71,7 @@ public class ButtonManager: IButtonManager
                 }
             );
         
-        //todo решить
+        
         return new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>
             {
@@ -82,5 +83,11 @@ public class ButtonManager: IButtonManager
                 }
             }
         );
+    }
+
+    public InlineKeyboardMarkup GetAnswerMarkup(bool withAnswer = false)
+    {
+        return new InlineKeyboardMarkup(GetTaskMarkup(true).InlineKeyboard
+            .Concat(new InlineKeyboardMarkup(new []{new InlineKeyboardButton("Подтвердить")}).InlineKeyboard));
     }
 }

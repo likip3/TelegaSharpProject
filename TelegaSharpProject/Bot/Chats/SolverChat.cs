@@ -12,6 +12,7 @@ public class SolverChat : ISolverChat
         ChatId = chatId;
         PageNum = 1;
         TaskChatInfo = new TaskChatInfo();
+        AnswerChatInfo = new AnswerChatInfo();
     } 
     
     public ChatState ChatState { get; private set; }
@@ -19,10 +20,12 @@ public class SolverChat : ISolverChat
     public long ChatId { get; }
     public int PageNum { get; private set; }
     public ITaskChatInfo TaskChatInfo { get; }
+    public IAnswerChatInfo AnswerChatInfo { get; }
 
     public void Reset()
     {
         TaskChatInfo.Reset();
+        AnswerChatInfo.Reset();
         ChatState = ChatState.WaitForCommand;
     }
 

@@ -9,5 +9,6 @@ public interface IButtonManager
 
     public InlineKeyboardMarkup GetTitleButtons();
 
-    public InlineKeyboardMarkup GetTaskMarkup(bool myTasks = false);
+    public InlineKeyboardMarkup GetTaskMarkup(bool myTask = false);
+    public InlineKeyboardMarkup GetAnswerMarkup(bool withAnswer = false);
 }

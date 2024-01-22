@@ -12,5 +12,5 @@ public interface ISolverChat
     public void SetToCommandState();
     public int PageNum { get; }
     public ITaskChatInfo TaskChatInfo { get; }
-    
+    public IAnswerChatInfo AnswerChatInfo { get; }
 }

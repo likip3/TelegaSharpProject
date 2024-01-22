@@ -4,8 +4,12 @@ using TelegaSharpProject.Domain.Interfaces;
 
 namespace TelegaSharpProject.Application.Bot.Chats.Infos;
 
-public class TaskChatInfo : ITaskChatInfo
+public class AnswerChatInfo : IAnswerChatInfo
 {
+    public IAnswerInfo? LastTask { get; private set; }
+    public int Page { get; private set; }
+    public From From { get; private set; }
+    
     public int TrySetDeltaPage(int delta)
     {
         if (Page + delta < 0)
@@ -20,17 +24,13 @@ public class TaskChatInfo : ITaskChatInfo
         Page = 0;
     }
 
-    public void SetTask(ITaskInfo taskInfo)
+    public void SetAnswer(IAnswerInfo answerInfo)
     {
-        LastTask = taskInfo;
+        LastTask = answerInfo;
     }
 
     public void SetFrom(From from)
     {
         From = from;
     }
-
-    public From From { get; private set; }
-    public ITaskInfo? LastTask { get; private set; }
-    public int Page { get; private set; }
 }

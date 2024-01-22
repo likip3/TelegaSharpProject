@@ -1,6 +1,6 @@
 namespace TelegaSharpProject.Application.Bot.Chats.Enums;
 
-public enum TaskFrom
+public enum From
 {
     Me,
     Others

@@ -5,15 +5,15 @@ using Telegram.Bot.Types;
 
 namespace TelegaSharpProject.Application.Bot.Buttons.Buttons;
 
-[SolverButton("Отправить ответ", "answer")]
-public class AnswerButton : Button
+[SolverButton("Вперёд", "tasknext")]
+public class NextButton : Button
 {
-    public AnswerButton(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }
-        
+    public NextButton(Lazy<IMessageService> messageServiceFactory) : base(messageServiceFactory) { }
+    
     internal override async Task ExecuteAsync(CallbackQuery ctx)
     {
         MessageServiceFactory.Value.ShowLoadingAsync(ctx);
-
-        MessageServiceFactory.Value.SendAnswerAsync(ctx.Message.Chat);
+        
+        await MessageServiceFactory.Value.AnotherPageTaskAsync(ctx.From, ctx.Message.Chat, 1);
     }
 }
