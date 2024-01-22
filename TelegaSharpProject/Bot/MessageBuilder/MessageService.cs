@@ -85,7 +85,7 @@ public class MessageService : IMessageService
         return (task, markup);
     }
 
-    public async Task Task(User user, Chat chat)
+    public async Task TaskFirstPage(User user, Chat chat)
     {
         var solverChat = ChatManager.GetChat(chat);
         solverChat.TaskChatInfo.Reset();
@@ -111,6 +111,30 @@ public class MessageService : IMessageService
             message,
             replyMarkup: markup
         );
+    }
+
+    public async Task TaskAnotherPage(User user, Chat chat, int delta)
+    {
+        var solverChat = ChatManager.GetChat(chat);
+        solverChat.TaskChatInfo.TrySetDeltaPage(delta);
+
+        try
+        {
+            var (taskInfo, markup) = await GetTask(solverChat, user);
+            solverChat.TaskChatInfo.SetTask(taskInfo);
+            
+            var message = taskInfo.ToMessage();
+            
+            await BotClient.SendTextMessageAsync(
+                chat.Id,
+                message,
+                replyMarkup: markup
+            );
+        }
+        catch (IndexOutOfRangeException)
+        {
+            await TaskFirstPage(user, chat);
+        }
     }
 
     public async Task CreateEntity(Message message)

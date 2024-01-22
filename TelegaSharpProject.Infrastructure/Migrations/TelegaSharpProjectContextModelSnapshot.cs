@@ -115,8 +115,9 @@ namespace TelegaSharpProject.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("task");
 
-                    b.Property<long>("TopicCreatorId")
-                        .HasColumnType("bigint");
+                    b.Property<long>("TopicCreator")
+                        .HasColumnType("bigint")
+                        .HasColumnName("topic_creator");
 
                     b.Property<DateTime>("TopicStart")
                         .HasColumnType("timestamp without time zone")
@@ -125,8 +126,6 @@ namespace TelegaSharpProject.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
-
-                    b.HasIndex("TopicCreatorId");
 
                     b.ToTable("works");
                 });
@@ -148,15 +147,7 @@ namespace TelegaSharpProject.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("AnswerId");
 
-                    b.HasOne("TelegaSharpProject.Infrastructure.Models.User", "TopicCreator")
-                        .WithMany()
-                        .HasForeignKey("TopicCreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Answer");
-
-                    b.Navigation("TopicCreator");
                 });
 #pragma warning restore 612, 618
         }

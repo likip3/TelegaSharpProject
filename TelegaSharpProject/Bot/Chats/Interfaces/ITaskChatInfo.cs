@@ -7,7 +7,7 @@ public interface ITaskChatInfo
     public ITaskInfo? LastTask { get; }
     public int Page { get; }
 
-    public int TrySetPage(int delta);
+    public int TrySetDeltaPage(int delta);
     public void Reset();
     public void SetTask(ITaskInfo taskInfo);
 }

@@ -15,15 +15,7 @@ public class TaskNextButton : Button
     internal override async Task ExecuteAsync(CallbackQuery ctx)
     {
         MessageServiceFactory.Value.ShowLoadingAsync(ctx);
-        // chat.TrySetPage(1);
-        //
-        // chat.TrySetPage(chat.PageNum + 1);
-        //
-        // await BotClient.Value.EditMessageTextAsync(
-        //     chat.Chat,
-        //     ctx.Message.MessageId,
-        //     MessageBuilder1.GetTasks(chat.PageNum),
-        //     replyMarkup: (InlineKeyboardMarkup)MessageBuilder1.GetTasksMarkup()
-        // );
+        
+        await MessageServiceFactory.Value.TaskAnotherPage(ctx.From, ctx.Message.Chat, 1);
     }
 }

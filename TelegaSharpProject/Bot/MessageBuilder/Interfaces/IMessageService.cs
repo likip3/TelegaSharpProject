@@ -8,7 +8,8 @@ public interface IMessageService
     public Task ToTitleAsync(Chat chat);
     public Task UserProfileAsync(Chat chat, User user);
     public Task LeaderBoard(Chat chat);
-    public Task Task(User user, Chat chat);
+    public Task TaskFirstPage(User user, Chat chat);
+    public Task TaskAnotherPage(User user, Chat chat, int delta);
     public Task CreateEntity(Message message);
     public Task SendTask(Chat chat);
 }

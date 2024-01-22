@@ -17,12 +17,8 @@ namespace TelegaSharpProject.Domain.Interfaces
 
         public Task<AnswerInfo[]> GetTaskAnswersAsync(long taskId);
 
-        public  Task<AnswerInfo[]> GetCommentsFromUser(long userId);
-
         public Task<ITaskInfo> CreateTaskAsync(long byUserId, string task);
 
         public Task TryRegisterUser(IUserInfo userInfo);
-
-        public Task<TaskInfo> GetUserTaskAsync(long userId, int page);
     }
 }

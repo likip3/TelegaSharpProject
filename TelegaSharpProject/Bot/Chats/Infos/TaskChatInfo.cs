@@ -5,7 +5,7 @@ namespace TelegaSharpProject.Application.Bot.Chats.Infos;
 
 public class TaskChatInfo : ITaskChatInfo
 {
-    public int TrySetPage(int delta)
+    public int TrySetDeltaPage(int delta)
     {
         if (Page + delta < 0)
             return Page;

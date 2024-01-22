@@ -8,12 +8,17 @@ public class TaskInfo : ITaskInfo
     public TaskInfo(Work work)
     {
         Id = work.Id;
-        TopicCreator = new UserInfo(work.TopicCreator);
+        
         TopicStart = work.TopicStart;
         Price = work.Price;
         MentorEnd = work.MentorEnd;
         Done = work.Done;
         Text = work.Task;
+    }
+
+    public TaskInfo(Work work, User user) : this(work)
+    {
+        TopicCreator = new UserInfo(user);
     }
 
     public long Id { get; }

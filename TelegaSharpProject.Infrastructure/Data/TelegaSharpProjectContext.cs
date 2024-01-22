@@ -8,17 +8,17 @@ public class TelegaSharpProjectContext : DbContext
 {
     private readonly IConnectionStringProvider _connectionStringProvider;
     
-    public TelegaSharpProjectContext(IConnectionStringProvider connectionStringProvider)
-    {
-        _connectionStringProvider = connectionStringProvider;
-    }
+    // public TelegaSharpProjectContext(IConnectionStringProvider connectionStringProvider)
+    // {
+    //     _connectionStringProvider = connectionStringProvider;
+    // }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         optionsBuilder.UseNpgsql(
-            // connectionString: "Host=ep-curly-dew-a2rdjhqn.eu-central-1.aws.neon.tech;Port=5432;Database=solverDB;Username=likip3;Password=A4ILZ3FtXopO" 
-            connectionString: _connectionStringProvider.ConnectionString
+            connectionString: "Host=ep-curly-dew-a2rdjhqn.eu-central-1.aws.neon.tech;Port=5432;Database=solverDB;Username=likip3;Password=A4ILZ3FtXopO" 
+            // connectionString: _connectionStringProvider.ConnectionString
         );
             base.OnConfiguring(optionsBuilder);
     }
@@ -28,10 +28,10 @@ public class TelegaSharpProjectContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public DbSet<User> Users => Set<User>();
+    public DbSet<User> Users { get; set; }
     //public DbSet<Discipline> Disciplines => Set<Discipline>();
     //public DbSet<Rating> Ratings => Set<Rating>();
-    public DbSet<Work> Works => Set<Work>();
-    public DbSet<Answer> Answers => Set<Answer>();
+    public DbSet<Work> Works { get; set; }
+    public DbSet<Answer> Answers { get; set; }
     //public DbSet<Dialog> Dialogs => Set<Dialog>();
 }

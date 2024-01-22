@@ -45,32 +45,31 @@ namespace TelegaSharpProject.Domain
             return new TaskInfo(result.Entity);
         }
 
-        public async Task<ITaskInfo[]> GetTasksAsync(long userId)
+        private async Task<ITaskInfo> GetTaskInfo(Work work)
         {
-            return await _db.Works
-                // .OrderBy(w => w.TopicStart)
-                .Where(task => task.TopicCreator.Id != userId)
-                .Select(task => new TaskInfo(task))
-                .ToArrayAsync();
+            var user = await _db.Users.FindAsync(work.TopicCreator);
+
+            return new TaskInfo(work, user);
         }
 
-        private async Task<TaskInfo[]> GetUserTasksAsync(long userId)
+        public async Task<ITaskInfo[]> GetTasksAsync(long userId)
         {
-            return await _db.Works
+            var works = await _db.Works
                 .OrderBy(w => w.TopicStart)
-                .Where(t => t.TopicCreator.Id == userId)
-                .Select(task => new TaskInfo(task))
-                .ToArrayAsync();
-        }
-        
-        public async Task<TaskInfo> GetUserTaskAsync(long userId, int page)
-        {
-            var set = await _db.Works
-                .Where(t => t.TopicCreator.Id == userId)
-                .OrderBy(w => w.TopicStart)
+                .Where(t => t.TopicCreator != userId)
                 .ToArrayAsync();
             
-            return new TaskInfo(set[page]);
+            return await Task.WhenAll(works.Select(GetTaskInfo));
+        }
+
+        private async Task<ITaskInfo[]> GetUserTasksAsync(long userId)
+        {
+            var works = await _db.Works
+                .OrderBy(w => w.TopicStart)
+                .Where(t => t.TopicCreator == userId)
+                .ToArrayAsync();
+            
+            return await Task.WhenAll(works.Select(GetTaskInfo));
         }
 
         public async Task CloseTask(long taskId, long answerId)
