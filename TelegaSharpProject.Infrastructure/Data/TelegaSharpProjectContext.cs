@@ -29,9 +29,6 @@ public class TelegaSharpProjectContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
-    //public DbSet<Discipline> Disciplines => Set<Discipline>();
-    //public DbSet<Rating> Ratings => Set<Rating>();
     public DbSet<Work> Works { get; set; }
     public DbSet<Answer> Answers { get; set; }
-    //public DbSet<Dialog> Dialogs => Set<Dialog>();
 }
