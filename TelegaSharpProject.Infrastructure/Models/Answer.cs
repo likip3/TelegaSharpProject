@@ -20,6 +20,11 @@ public class Answer
         var gb = Guid.NewGuid().ToByteArray();
         Id = BitConverter.ToInt64(gb, 0);
     }
+    
+    public void Close()
+    {
+        Closed = true;
+    }
 
     [Key]
     [Column("id")]

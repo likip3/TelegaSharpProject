@@ -30,7 +30,8 @@ public static class DomainEntitiesExtensions
             return result + "Статус: Открыта";
 
         return result +
-               $"Статус: Закрыта, {task.MentorEnd.Value.ToString(CultureInfo.InvariantCulture)}" +
+               $"Статус: Закрыта, {task.MentorEnd.Value.ToString(CultureInfo.InvariantCulture)}\n" +
+               $"Ответ:\n{task.AnswerInfo.Text}\n" +
                $"Ментор: {task.Mentor.UserName}";
     }
 

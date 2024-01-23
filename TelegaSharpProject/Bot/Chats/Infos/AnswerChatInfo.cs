@@ -6,7 +6,7 @@ namespace TelegaSharpProject.Application.Bot.Chats.Infos;
 
 public class AnswerChatInfo : IAnswerChatInfo
 {
-    public IAnswerInfo? LastTask { get; private set; }
+    public IAnswerInfo? LastAnswer { get; private set; }
     public int Page { get; private set; }
     public From From { get; private set; }
     
@@ -26,7 +26,7 @@ public class AnswerChatInfo : IAnswerChatInfo
 
     public void SetAnswer(IAnswerInfo answerInfo)
     {
-        LastTask = answerInfo;
+        LastAnswer = answerInfo;
     }
 
     public void SetFrom(From from)

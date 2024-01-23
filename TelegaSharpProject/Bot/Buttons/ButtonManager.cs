@@ -105,6 +105,10 @@ public class ButtonManager: IButtonManager
                     _buttonsDict["taskback"],
                     _buttonsDict["title"],
                     _buttonsDict["tasknext"],
+                },
+                new InlineKeyboardButton[]
+                {
+                    _buttonsDict["confirm"],
                 }
             }
         );

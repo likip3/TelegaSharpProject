@@ -15,4 +15,5 @@ public interface IMessageService
     public Task SendAnswerAsync(Chat chat);
     public Task AnswerFirstPageAsync(User user, Chat chat);
     public Task AnotherPageAnswerAsync(User user, Chat chat, int delta);
+    public Task ConfirmAnswerAsync(User user, Chat chat);
 }

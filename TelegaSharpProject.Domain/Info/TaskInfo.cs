@@ -20,6 +20,18 @@ public class TaskInfo : ITaskInfo
         Creator = new UserInfo(user);
     }
 
+    public TaskInfo(Work work, User creator, User mentor, Answer answer) : this(work, creator)
+    {
+        Mentor = new UserInfo(mentor);
+        AnswerInfo = new AnswerInfo(answer, mentor, this);
+    }
+
+    public TaskInfo(Work work, User user, IAnswerInfo answerInfo) : this(work, user)
+    {
+        AnswerInfo = answerInfo;
+        Mentor = answerInfo.ByUser;
+    }
+
     public long Id { get; }
 
     public IUserInfo Creator { get; }
@@ -29,6 +41,8 @@ public class TaskInfo : ITaskInfo
     public DateTime? MentorEnd { get; }
     
     public IUserInfo? Mentor { get; }
+    
+    public IAnswerInfo AnswerInfo { get; }
 
     public string Text { get; }
         

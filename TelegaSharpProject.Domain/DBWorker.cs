@@ -56,11 +56,16 @@ namespace TelegaSharpProject.Domain
             return new TaskInfo(result.Entity, user);
         }
 
-        private async Task<ITaskInfo> GetTaskInfo(Work work)
+        private async Task<ITaskInfo> GetTaskInfoAsync(Work work)
         {
             var user = await _db.Users.FindAsync(work.CreatorId);
+            
+            if (!work.Done)
+                return new TaskInfo(work, user);
 
-            return new TaskInfo(work, user);
+            var answerInfo = await GetAnswerInfoAsync(await GetAnswerAsync(work.Answer));
+
+            return new TaskInfo(work, user, answerInfo);
         }
 
         public async Task<ITaskInfo> GetTaskByIdAsync(long taskId)
@@ -76,17 +81,33 @@ namespace TelegaSharpProject.Domain
             var works = await _db.Works
                 .OrderByDescending(w => w.TopicStart)
                 .Where(t => (t.CreatorId != userId) == !fromThisUser)
+                .Where(t => fromThisUser || !t.Done)
                 .ToArrayAsync();
             
-            return await Task.WhenAll(works.Select(GetTaskInfo));
+            return await Task.WhenAll(works.Select(GetTaskInfoAsync));
         }
 
-        public async Task CloseTaskAsync(long taskId, long answerId)
+        public async Task<ITaskInfo> CloseTaskAsync(long taskId, long answerId)
         {
             var task = await _db.Works.FindAsync(taskId);
-            task?.Close(await GetAnswerAsync(answerId));
+            var answer = await GetAnswerAsync(answerId);
+            var user = await _db.Users.FindAsync(answer.ByUserId);
+            
+            task.Close(answer);
+            answer.Close();
+            user.IncreasePoints(task.Price);
+            
             _db.Works.Update(task);
+            _db.Answers.Update(answer);
+            _db.Users.Update(user);
+            
             await _db.SaveChangesAsync();
+
+            return new TaskInfo(
+                task,
+                await _db.Users.FindAsync(task.CreatorId),
+                user,
+                answer);
         }
 
         private async Task<Answer> GetAnswerAsync(long answerId)
@@ -110,14 +131,19 @@ namespace TelegaSharpProject.Domain
                 .Where(answer => answer.TaskId == taskId)
                 .ToArrayAsync();
             
-            return await Task.WhenAll(answers.Select(a => GetAnswerInfo(a)));
+            return await Task.WhenAll(answers.Select(a => GetAnswerInfoAsync(a)));
         }
 
-        private async Task<IAnswerInfo> GetAnswerInfo(Answer answer, User? user = null)
+        private async Task<IAnswerInfo> GetAnswerInfoAsync(Answer answer, User? user = null)
         {
             user ??= await _db.Users.FindAsync(answer.ByUserId);
+            var task = await _db.Works.FindAsync(answer.TaskId);
+            var creator = await _db.Users.FindAsync(task.CreatorId);
 
-            return new AnswerInfo(answer, user, await GetTaskByIdAsync(answer.TaskId));
+            var a1 = new AnswerInfo(answer, user);
+            var t = new TaskInfo(task, creator, a1);
+
+            return new AnswerInfo(answer, user, t);
         }
         
         public async Task<IAnswerInfo[]> GetUserAnswersAsync(long userId, User? user = null)
@@ -125,13 +151,13 @@ namespace TelegaSharpProject.Domain
             user ??= await _db.Users.FindAsync(userId);
             
             var answers = await _db.Answers
-                .OrderBy(a => a.AnswerTime)
+                .OrderByDescending(a => a.AnswerTime)
                 .Where(a => a.ByUserId == userId)
                 .ToArrayAsync();
             
             return await Task.WhenAll
             (answers
-                .Select(a => GetAnswerInfo(a, user)));
+                .Select(a => GetAnswerInfoAsync(a, user)));
         }
 
         public async Task TryRegisterUserAsync(IUserInfo userInfo)

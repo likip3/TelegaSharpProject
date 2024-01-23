@@ -196,7 +196,7 @@ public class MessageService : IMessageService
             : await Worker.GetTaskAnswersAsync(solverChat.TaskChatInfo.LastTask.Id);
         
         var answer = answers[solverChat.AnswerChatInfo.Page];
-        var markup = ButtonManager.GetAnswerMarkup(!fromThisUser && !answer.Closed);
+        var markup = ButtonManager.GetAnswerMarkup(!fromThisUser && !answer.TaskInfo.Done);
 
         return (answer, markup);
     }
@@ -251,6 +251,30 @@ public class MessageService : IMessageService
         {
             await AnswerFirstPageAsync(user, chat);
         }
+    }
+
+    public async Task ConfirmAnswerAsync(User user, Chat chat)
+    {
+        var solverChat = ChatManager.GetChat(chat.Id);
+
+        var taskInfo = await Worker.CloseTaskAsync(
+            solverChat.TaskChatInfo.LastTask.Id,
+            solverChat.AnswerChatInfo.LastAnswer.Id);
+
+        var mentor = taskInfo.Mentor;
+
+        var tasks = new[]
+        {
+            SendMessageAsync(
+                mentor.ChatId,
+                $"Ваш ответ был помечен правильным\n\n{taskInfo.AnswerInfo.ToMessage(true)}"),
+            SendMessageAsync(
+                chat.Id,
+                $"Ответ записан как правильный!\n\n{taskInfo.AnswerInfo.ToMessage()}",
+                ButtonManager.GetAnswerMarkup())
+        };
+
+        await Task.WhenAll(tasks);
     }
 
     private async Task SendMessageAsync(long chatId, string message, IReplyMarkup? markup = null)

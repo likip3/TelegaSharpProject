@@ -16,7 +16,7 @@ namespace TelegaSharpProject.Domain.Interfaces
 
         public Task<ITaskInfo[]> GetTasksAsync(long userId, bool fromThisUser = false);
 
-        public Task CloseTaskAsync(long taskId, long answerId);
+        public Task<ITaskInfo> CloseTaskAsync(long taskId, long answerId);
 
         public Task<IAnswerInfo> CreateAnswerAsync(long taskId, long byUser, string text);
 

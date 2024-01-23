@@ -14,6 +14,11 @@ public class User
         UserName = userName;
         ChatId = chatId;
     }
+    
+    public void IncreasePoints(long taskPrice)
+    {
+        Points += taskPrice;
+    }
 
     [Key]
     [Column("id")]
