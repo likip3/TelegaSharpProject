@@ -12,12 +12,12 @@
 
 ### DDD
 
-Решение разбито на три области - инфраструктурная, доменная, приложение
+Решение разбито на три области - [приложение](https://github.com/likip3/TelegaSharpProject/tree/master/TelegaSharpProject), [доменная](https://github.com/likip3/TelegaSharpProject/tree/master/TelegaSharpProject.Domain), [инфраструктурная](https://github.com/likip3/TelegaSharpProject/tree/master/TelegaSharpProject.Infrastructure)
 
 ### OCP
 
-Есть точки расширения. Например, можно легко добавить кнопку, всего лишь унаследовавшись от их базовых классов
+Есть точки расширения. Например, можно легко добавить [кнопку](https://github.com/likip3/TelegaSharpProject/blob/master/TelegaSharpProject/Bot/Buttons/Abstracts/Button.cs) или [команду](https://github.com/likip3/TelegaSharpProject/blob/master/TelegaSharpProject/Bot/Commands/Abstracts/Command.cs), всего лишь унаследовавшись от их базовых классов
 
 ### DI-контейнер
 
-Использована библиотека `Ninject` для реализации DI-контейнера
+Использована библиотека `Ninject` для реализации [DI-контейнера](https://github.com/likip3/TelegaSharpProject/blob/master/TelegaSharpProject/Program.cs)
