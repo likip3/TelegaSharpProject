@@ -8,18 +8,17 @@ public class TelegaSharpProjectContext : DbContext
 {
     private readonly IConnectionStringProvider _connectionStringProvider;
     
-    // public TelegaSharpProjectContext(IConnectionStringProvider connectionStringProvider)
-    // {
-    //     _connectionStringProvider = connectionStringProvider;
-    // }
+    public TelegaSharpProjectContext(IConnectionStringProvider connectionStringProvider)
+    {
+        _connectionStringProvider = connectionStringProvider;
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //todo
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         optionsBuilder.UseNpgsql(
-            connectionString: "Host=ep-curly-dew-a2rdjhqn.eu-central-1.aws.neon.tech;Port=5432;Database=solverDB;Username=likip3;Password=A4ILZ3FtXopO" 
-            // connectionString: _connectionStringProvider.ConnectionString
+            // connectionString: "Host=ep-curly-dew-a2rdjhqn.eu-central-1.aws.neon.tech;Port=5432;Database=solverDB;Username=likip3;Password=A4ILZ3FtXopO" 
+            connectionString: _connectionStringProvider.ConnectionString
         );
             base.OnConfiguring(optionsBuilder);
     }
